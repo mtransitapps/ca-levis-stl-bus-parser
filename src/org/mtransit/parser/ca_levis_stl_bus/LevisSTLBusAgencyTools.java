@@ -28,7 +28,7 @@ import org.mtransit.parser.mt.data.MTrip;
 import org.mtransit.parser.mt.data.MTripStop;
 
 // https://www.stlevis.ca/stlevis/donnees-ouvertes
-// https://www.stlevis.ca/sites/default/files/public/assets/donnees-ouvertes/stlevis-prin17.zip
+// https://www.stlevis.ca/sites/default/files/public/assets/donnees-ouvertes/stlevis-ete17.zip
 public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -161,6 +161,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String CHEMIN_DES_ILES = "Chemin des Îles";
 	private static final String CHEMIN_VIRE_CRÊPES = "Chemin Vire-Crêpes";
 	private static final String DERNIER_ARRET = "Dernier Arrêt";
+	private static final String DIRECT = "Direct";
 	private static final String DORVAL = "Dorval";
 	private static final String DU_PRESIDENT_KENNEDY = "Du Président-Kennedy";
 	private static final String DU_SAULT = "Du Sault";
@@ -223,8 +224,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String COLLEGE_DE_LEVIS = "Collège de " + LEVIS;
 	private static final String HOTEL_DIEU_DE_LEVIS = "Hôtel-Dieu De " + LEVIS;
 	private static final String RUE_ST_LAURENT = "Rue " + ST_LAURENT;
-	private static final String ST_NICOLAS_VILLAGE = VILLAGE + SPACE + P1 + ST_NICOLAS + P2;
-	private static final String ST_NICOLAS_BERNIERES = BERNIERES + SPACE + P1 + ST_NICOLAS + P2;
+	private static final String VILLAGE_ST_NICOLAS = VILLAGE + SPACE + P1 + ST_NICOLAS + P2;
+	private static final String BERNIERES_ST_NICOLAS = BERNIERES + SPACE + P1 + ST_NICOLAS + P2;
+	private static final String _P1_DIRECT_P2 = SPACE + P1 + DIRECT + P2;
 
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
@@ -239,14 +241,16 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return LAUZON + TO + VIEUX_LEVIS;
 				case 13:
 					return ST_DAVID + DASH + LEVIS_CENTRE;
+				case 14:
+					return LEVIS_CENTRE;
 				case 15:
 					return PINTENDRE;
 				case 19:
 					return BREAKEYVILLE;
 				case 22:
-					return ST_NICOLAS_BERNIERES;
+					return BERNIERES_ST_NICOLAS;
 				case 23:
-					return ST_NICOLAS_VILLAGE;
+					return VILLAGE_ST_NICOLAS;
 				case 24:
 					return ST_REDEMPTEUR;
 				case 65:
@@ -270,7 +274,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				case 185:
 					return COLLEGE_DE_LEVIS + SLASH + MARCELLE_MALLET + DASH + ST_ROMUALD;
 				case 221:
-					return JUVENAT_NOTRE_DAME_LONG + DASH + ST_NICOLAS_BERNIERES;
+					return JUVENAT_NOTRE_DAME_LONG + DASH + BERNIERES_ST_NICOLAS;
 				case 222:
 					return JUVENAT_NOTRE_DAME_LONG + DASH + ST_NICOLAS + SLASH + PRESQU_ILE;
 				case 225:
@@ -320,11 +324,13 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			} else if ("T16".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return BREAKEYVILLE + DASH + ST_JEAN_CHRYSOSTOME;
 			} else if ("T22".equalsIgnoreCase(gRoute.getRouteShortName())) {
-				return ST_NICOLAS_BERNIERES;
+				return BERNIERES_ST_NICOLAS;
 			} else if ("T23".equalsIgnoreCase(gRoute.getRouteShortName())) {
-				return ST_NICOLAS_VILLAGE;
+				return VILLAGE_ST_NICOLAS;
 			} else if ("T25".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return CHEMIN_VIRE_CRÊPES + DASH + STATION_PLANTE;
+			} else if ("T65".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return ST_LAMBERT + DASH + "Secteur des Éperviers";
 			}
 			if ("11A".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return LEVIS_CENTRE + DASH + LAUZON;
@@ -403,6 +409,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				case 915: return SCHOOL_BUS_COLOR;
 				// @formatter:on
 				}
+			}
+			if ("T65".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return "C7B24C";
 			}
 			System.out.printf("\nUnexpected route color for %s!\n", gRoute);
 			System.exit(-1);
@@ -493,6 +502,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"110002", // Terminus de la Traverse
+								"110580", // Galeries Chagnon - A.-Desjardins
 								"110450", // Station du Vieux-Fort
 								"110288", // Lallemand / des Riveurs
 						})) //
@@ -757,6 +767,14 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString((DORVAL + TO + HOTEL_DIEU_DE_LEVIS + TO + UQAR + TO + ST_DAVID + TO).trim(), mTrip.getHeadsignId());
 				return true;
 			}
+		} else if (mTrip.getRouteId() == 14L) {
+			if (Arrays.asList( //
+					UQAR, //
+					"Wilfrid-Carrier" + SLASH + "Arpents" // LEVIS_CENTRE
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Wilfrid-Carrier" + SLASH + "Arpents", mTrip.getHeadsignId()); // LEVIS_CENTRE
+				return true;
+			}
 		} else if (mTrip.getRouteId() == 15L) {
 			if (Arrays.asList( //
 					PINTENDRE, //
@@ -779,17 +797,45 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					ST_AUG + SLASH + V_CHEMIN, //
 					BREAKEYVILLE, //
+					BREAKEYVILLE + _P1_DIRECT_P2, //
 					BREAKEYVILLE + SLASH + ST_LAMBERT //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(BREAKEYVILLE, mTrip.getHeadsignId());
 				return true;
+			} else if (Arrays.asList( //
+					STATION_DE_LA_CONCORDE, //
+					STATION_DE_LA_CONCORDE + _P1_DIRECT_P2 //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(STATION_DE_LA_CONCORDE, mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == 22L) {
+			if (Arrays.asList( //
+					PARC_RELAIS_BUS_DES_RIVIÈRES, //
+					PARC_RELAIS_BUS_DES_RIVIÈRES + _P1_DIRECT_P2 //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(PARC_RELAIS_BUS_DES_RIVIÈRES, mTrip.getHeadsignId());
+				return true;
+			} else if (Arrays.asList( //
+					BERNIERES_ST_NICOLAS, //
+					BERNIERES_ST_NICOLAS + _P1_DIRECT_P2 //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(BERNIERES_ST_NICOLAS, mTrip.getHeadsignId());
+				return true;
 			}
 		} else if (mTrip.getRouteId() == 23L) {
 			if (Arrays.asList( //
+					PARC_RELAIS_BUS_DES_RIVIÈRES, //
+					PARC_RELAIS_BUS_DES_RIVIÈRES + _P1_DIRECT_P2 //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(PARC_RELAIS_BUS_DES_RIVIÈRES, mTrip.getHeadsignId());
+				return true;
+			} else if (Arrays.asList( //
 					PIONNIERS + SLASH + BARONET, //
-					ST_NICOLAS_VILLAGE //
-					).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString(ST_NICOLAS_VILLAGE, mTrip.getHeadsignId());
+					VILLAGE_ST_NICOLAS, //
+					VILLAGE_ST_NICOLAS + _P1_DIRECT_P2 //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(VILLAGE_ST_NICOLAS, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 27L + RID__E) { // 27E
@@ -848,10 +894,10 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String ST_LAMBERT_REPLACEMENT = "$2" + ST_LAMBERT + "$4";
 
 	private static final Pattern ST_NICOLAS_BERNIERES_ = Pattern.compile("((^|\\W){1}(st\\-nicolas \\- bernières)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
-	private static final String ST_NICOLAS_BERNIERES_REPLACEMENT = "$2" + ST_NICOLAS_BERNIERES + "$4";
+	private static final String ST_NICOLAS_BERNIERES_REPLACEMENT = "$2" + BERNIERES_ST_NICOLAS + "$4";
 
 	private static final Pattern ST_NICOLAS_VILLAGE_ = Pattern.compile("((^|\\W){1}(st\\-nicolas \\- village)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
-	private static final String ST_NICOLAS_VILLAGE_REPLACEMENT = "$2" + ST_NICOLAS_VILLAGE + "$4";
+	private static final String ST_NICOLAS_VILLAGE_REPLACEMENT = "$2" + VILLAGE_ST_NICOLAS + "$4";
 
 	private static final Pattern UNIVERSITE_ = Pattern.compile("((^|\\W){1}(universit[é|e])(\\W|$){1})", Pattern.CASE_INSENSITIVE);
 	private static final String UNIVERSITE_REPLACEMENT = "$2" + UNIVERSITE_SHORT; // + "$4"
