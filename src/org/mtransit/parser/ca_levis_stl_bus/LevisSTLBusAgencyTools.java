@@ -45,11 +45,11 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void start(String[] args) {
-		System.out.printf("\nGenerating STL bus data...");
+		System.out.printf("\nGenerating STLévis bus data...");
 		long start = System.currentTimeMillis();
 		this.serviceIds = extractUsefulServiceIds(args, this);
 		super.start(args);
-		System.out.printf("\nGenerating STL bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+		System.out.printf("\nGenerating STLévis bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String MANIC = "Manic";
 	private static final String MARCELLE_MALLET = "Marcelle-Mallet";
 	private static final String MONTCALM = "Montcalm";
-	private static final String PARC_RELAIS_BUS_SHORT = "P+R";
+	private static final String PARC_RELAIS_BUS_SHORT = "PRB"; // "P+R";
 	private static final String PARC_RELAIS_BUS_DES_RIVIÈRES = PARC_RELAIS_BUS_SHORT + " Des Rivières";
 	private static final String PINTENDRE = "Pintendre";
 	private static final String PIONNIERS = "Pionniers";
@@ -271,6 +271,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return ST_JEAN_CHRYSOSTOME + SLASH + GRAVEL + DASH + JUVENAT_NOTRE_DAME_LONG;
 				case 175:
 					return ST_JEAN_CHRYSOSTOME + SLASH + MANIC + SLASH + COLLEGE_DE_LEVIS + DASH + MARCELLE_MALLET;
+				case 181:
+					return JUVENAT_NOTRE_DAME_LONG + DASH + ST_ROMUALD;
 				case 185:
 					return COLLEGE_DE_LEVIS + SLASH + MARCELLE_MALLET + DASH + ST_ROMUALD;
 				case 221:
@@ -296,6 +298,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				case 246:
 					return COLLEGE_DE_LEVIS + SLASH + MARCELLE_MALLET + DASH + ST_REDEMPTEUR + SLASH + ST_NICOLAS;
 				case 915:
+					return COLLEGE_DE_LEVIS + SLASH + MARCELLE_MALLET + DASH + PINTENDRE;
+				case 916:
 					return COLLEGE_DE_LEVIS + SLASH + MARCELLE_MALLET + DASH + PINTENDRE;
 				}
 			}
@@ -357,6 +361,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			} else if ("60E".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return PARC_RELAIS_BUS_DES_RIVIÈRES + DASH + RIVE_NORD;
 			}
+			if (isGoodEnoughAccepted()) {
+				return "Parcours " + gRoute.getRouteShortName();
+			}
 			System.out.printf("\nUnexpected route long name for %s!\n", gRoute);
 			System.exit(-1);
 			return null;
@@ -412,6 +419,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 			if ("T65".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return "C7B24C";
+			}
+			if (isGoodEnoughAccepted()) {
+				return null;
 			}
 			System.out.printf("\nUnexpected route color for %s!\n", gRoute);
 			System.exit(-1);
@@ -524,25 +534,28 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 						})) //
 				.compileBothTripSort());
 		map2.put(13L, new RouteTripSpec(13L, //
-				0, MTrip.HEADSIGN_TYPE_STRING, DORVAL, // TODO LEVIS_CENTRE
+				0, MTrip.HEADSIGN_TYPE_STRING, VIEUX_LEVIS, // TODO LEVIS_CENTRE
 				1, MTrip.HEADSIGN_TYPE_STRING, ST_DAVID) //
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"130145", // Ston des Rubis
 								"130143", // ++
 								"20232", // ++
-								"130645", // Station Galeries Chagnon #DORVAL
+								"20230", // Station Galeries Chagnon #DORVAL
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"130645", // Station Galeries Chagnon #DORVAL
-								"130635", // ++
+								"20230", // Station Galeries Chagnon #DORVAL
+								"110572", // A.-Desjardins / O.-J.-Morin
+								"110570", // ++
+								"110560", "110550", "120330", "120340", "120350", "110707", "120370", //
 								"20035", // ++
 								"20045", // Ston Hôtel-Dieu de Lévis
 								"110830", // ++
+								"110820", "140025", "130585", "130583", "130581", "120345", "130690", "120335", "110515", "110525", //
 								"110527", // Alphonse-Desjardins / Octave-J.-Morin
 								"110535", // Galeries Chagnon / Alph.-Desjardins
-								"130155", // ++
+								"130405", // ++
 								"130145", // Ston des Rubis
 						})) //
 				.compileBothTripSort());
@@ -555,12 +568,13 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 								"130160", // ++
 								"110580", // Galeries Chagnon / Alph.-Desjardins
 								"110572", // Alphonse-Desjardins / Octave-J.-Morin
-								"130720", // ++
-								"130002", // Station Galeries Chagnon #DORVAL
+								"110765", // ++
+								"110527", // A.-Desjardins / O.-J.-Morin
+								"20215", // Station Galeries Chagnon #DORVAL
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"130002", // Station Galeries Chagnon
+						"20215", // Station Galeries Chagnon
 								"20217", // ++
 								"130140", // ++
 								"130150", // Ston des Rubis
@@ -610,6 +624,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"180010", // Station de la Concorde
+								"180012", // E.-Lacasse / de la Concorde
 								"180080", // ++
 								"180190", // des Générations / de Charny
 
@@ -722,9 +737,26 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			} else if (Arrays.asList( //
 					PLACE_QUEBEC, //
-					QUEBEC_CENTRE //
-					).containsAll(headsignsValues)) {
+					PLACE_QUEBEC + DASH + "R-Lévesque", //
+					QUEBEC_CENTRE, //
+					"St-Paul" + SLASH + "A-Martin" //
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(QUEBEC_CENTRE, mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == RID_ESQ) { // ESQ
+			if (Arrays.asList( //
+					QUEBEC_CENTRE, //
+					QUEBEC_CENTRE + VIA + DU_SAULT, //
+					"St-Paul" + SLASH + "A-Martin" //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(QUEBEC_CENTRE, mTrip.getHeadsignId());
+				return true;
+			} else if (Arrays.asList( //
+					ST_JEAN_CHRYSOSTOME, //
+					ST_JEAN_CHRYSOSTOME + VIA + DU_SAULT //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(ST_JEAN_CHRYSOSTOME, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == RID_L + 1L) { // L1
@@ -762,17 +794,19 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		} else if (mTrip.getRouteId() == 13L + RID__A) {
 			if (Arrays.asList( //
 					GALERIES_CHAGNON + DASH + A_DESJARDINS, //
-					(DORVAL + TO + HOTEL_DIEU_DE_LEVIS + TO + UQAR + TO + ST_DAVID + TO).trim()//
+					(DORVAL + TO + HOTEL_DIEU_DE_LEVIS + TO + UQAR + TO + ST_DAVID + TO).trim() //
 					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString((DORVAL + TO + HOTEL_DIEU_DE_LEVIS + TO + UQAR + TO + ST_DAVID + TO).trim(), mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 14L) {
 			if (Arrays.asList( //
+					LEVIS_CENTRE, //
+					LEVIS_CENTRE + SPACE + P1 + UQAR + P2, //
 					UQAR, //
 					"Wilfrid-Carrier" + SLASH + "Arpents" // LEVIS_CENTRE
 			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString("Wilfrid-Carrier" + SLASH + "Arpents", mTrip.getHeadsignId()); // LEVIS_CENTRE
+				mTrip.setHeadsignString(LEVIS_CENTRE, mTrip.getHeadsignId()); // LEVIS_CENTRE
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 15L) {
@@ -818,7 +852,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			} else if (Arrays.asList( //
 					BERNIERES_ST_NICOLAS, //
-					BERNIERES_ST_NICOLAS + _P1_DIRECT_P2 //
+					BERNIERES_ST_NICOLAS + _P1_DIRECT_P2, //
+					"Lisière" + SLASH + "Charmilles" //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(BERNIERES_ST_NICOLAS, mTrip.getHeadsignId());
 				return true;
@@ -840,6 +875,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 27L + RID__E) { // 27E
 			if (Arrays.asList( //
+					CEGEP_GARNEAU, //
 					STE_FOY + DASH + UNIVERSITE_LAVAL + SLASH + EMILE_COTE, //
 					UNIVERSITE_LAVAL //
 					).containsAll(headsignsValues)) {
@@ -874,6 +910,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString(ST_LAMBERT, mTrip.getHeadsignId());
 				return true;
 			}
+		}
+		if (isGoodEnoughAccepted()) {
+			return super.mergeHeadsign(mTrip, mTripToMerge);
 		}
 		System.out.printf("\nUnexpected trips to merge %s & %s!\n", mTrip, mTripToMerge);
 		System.exit(-1);
