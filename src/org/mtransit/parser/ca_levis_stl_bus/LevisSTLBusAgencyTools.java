@@ -28,7 +28,7 @@ import org.mtransit.parser.mt.data.MTrip;
 import org.mtransit.parser.mt.data.MTripStop;
 
 // https://www.stlevis.ca/stlevis/donnees-ouvertes
-// https://www.stlevis.ca/sites/default/files/public/assets/donnees-ouvertes/stlevis-ete17.zip
+// https://www.stlevis.ca/sites/default/files/public/assets/gtfs/transit/gtfs_stlevis.zip
 public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
