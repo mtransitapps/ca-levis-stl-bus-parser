@@ -911,9 +911,6 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			}
 		}
-		if (isGoodEnoughAccepted()) {
-			return super.mergeHeadsign(mTrip, mTripToMerge);
-		}
 		System.out.printf("\nUnexpected trips to merge %s & %s!\n", mTrip, mTripToMerge);
 		System.exit(-1);
 		return false;
