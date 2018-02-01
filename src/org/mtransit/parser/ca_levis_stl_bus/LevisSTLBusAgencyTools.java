@@ -545,7 +545,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-								"20230", // Station Galeries Chagnon #DORVAL
+						"20230", // Station Galeries Chagnon #DORVAL
 								"110572", // A.-Desjardins / O.-J.-Morin
 								"110570", // ++
 								"110560", "110550", "120330", "120340", "120350", "110707", "120370", //
@@ -680,9 +680,15 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
+	public String cleanStopOriginalId(String gStopId) {
+		gStopId = CleanUtils.cleanMergedID(gStopId);
+		return gStopId;
+	}
+
+	@Override
 	public int compareEarly(long routeId, List<MTripStop> list1, List<MTripStop> list2, MTripStop ts1, MTripStop ts2, GStop ts1GStop, GStop ts2GStop) {
 		if (ALL_ROUTE_TRIPS2.containsKey(routeId)) {
-			return ALL_ROUTE_TRIPS2.get(routeId).compare(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop);
+			return ALL_ROUTE_TRIPS2.get(routeId).compare(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop, this);
 		}
 		return super.compareEarly(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop);
 	}
@@ -698,7 +704,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public Pair<Long[], Integer[]> splitTripStop(MRoute mRoute, GTrip gTrip, GTripStop gTripStop, ArrayList<MTrip> splitTrips, GSpec routeGTFS) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
-			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, ALL_ROUTE_TRIPS2.get(mRoute.getId()));
+			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, ALL_ROUTE_TRIPS2.get(mRoute.getId()), this);
 		}
 		return super.splitTripStop(mRoute, gTrip, gTripStop, splitTrips, routeGTFS);
 	}
@@ -984,6 +990,13 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String getStopCode(GStop gStop) {
-		return gStop.getStopId(); // using stop ID as stop code
+		return String.valueOf(getStopId(gStop)); // using stop ID as stop code
+	}
+
+	@Override
+	public int getStopId(GStop gStop) {
+		String stopId = gStop.getStopId();
+		stopId = CleanUtils.cleanMergedID(stopId);
+		return Integer.parseInt(stopId);
 	}
 }
