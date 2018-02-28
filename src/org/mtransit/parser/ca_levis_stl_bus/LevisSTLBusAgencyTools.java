@@ -438,7 +438,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				1, MTrip.HEADSIGN_TYPE_STRING, LEVIS) //
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
-						"10005", // Terminus de la Traverse
+						"10005", // != Terminus de la Traverse
+								"20005", // != Terminus de la Traverse
+								"20015", // ==
 								"20495", // Station de la Concorde
 								"10010", // Terminus Lagueux
 						})) //
@@ -446,7 +448,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"10010", // Terminus Lagueux
 								"20510", // Station de la Concorde
-								"10005", // Terminus de la Traverse
+								"20010", // ==
+								"20005", // != Terminus de la Traverse
+								"10005", // != Terminus de la Traverse
 						})) //
 				.compileBothTripSort());
 		map2.put(RID_L + 2L, new RouteTripSpec(RID_L + 2L, // L2
