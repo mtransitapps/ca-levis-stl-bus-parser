@@ -91,19 +91,19 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final long RID_L = 12 * 1000L;
 	private static final long RID_T = 20 * 1000L;
 
-	private static final long RID__A = 1 * 100000L;
-	private static final long RID__E = 5 * 100000L;
-	private static final long RID__R = 18 * 100000L;
+	private static final long RID__A = 1 * 100_000L;
+	private static final long RID__E = 5 * 100_000L;
+	private static final long RID__R = 18 * 100_000L;
 
 	private static final String RSN_ECQ = "ECQ";
 	private static final String RSN_ELQ = "ELQ";
 	private static final String RSN_EOQ = "EOQ";
 	private static final String RSN_ESQ = "ESQ";
 
-	private static final long RID_ECQ = 9050317L;
-	private static final long RID_ELQ = 9051217L;
-	private static final long RID_EOQ = 9051517L;
-	private static final long RID_ESQ = 9051917L;
+	private static final long RID_ECQ = 9_050_317L;
+	private static final long RID_ELQ = 9_051_217L;
+	private static final long RID_EOQ = 9_051_517L;
+	private static final long RID_ESQ = 9_051_917L;
 
 	@Override
 	public long getRouteId(GRoute gRoute) {
@@ -152,8 +152,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String NORD = "Nord";
 
 	private static final String A_DESJARDINS = "A-Desjardins";
+	private static final String ABRAHAM_MARTIN_SHORT = "A-Martin";
 	private static final String BARONET = "Baronet";
-	private static final String BERNIERES = "Bernières";
+	private static final String BERNIERES = "Bernières";
 	private static final String BERNIERES_EST = BERNIERES + SPACE + EST;
 	private static final String BREAKEYVILLE = "Breakeyville";
 	private static final String CEGEP = "Cégep";
@@ -196,6 +197,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String PLACE_QUEBEC = PLACE + SPACE + QUEBEC;
 	private static final String PROVENCE = "Provence";
 	private static final String RACCOURCI = "Raccourci";
+	private static final String RENE_LEVESQUE_SHORT = "R-Lévesque";
 	private static final String RIVE_NORD = "Rive-" + NORD;
 	private static final String ST_AUG = "St-Aug";
 	private static final String ST_DAVID = "St-David";
@@ -752,19 +754,19 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			} else if (Arrays.asList( //
 					PLACE_QUEBEC, //
-					PLACE_QUEBEC + DASH + "R-Lévesque", //
+					PLACE_QUEBEC + DASH + RENE_LEVESQUE_SHORT, //
 					QUEBEC_CENTRE, //
-					"St-Paul" + SLASH + "A-Martin" //
+					"St-Paul" + SLASH + ABRAHAM_MARTIN_SHORT //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(QUEBEC_CENTRE, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == RID_ESQ) { // ESQ
 			if (Arrays.asList( //
-					QUEBEC_CENTRE, //
+					"St-Paul" + SLASH + ABRAHAM_MARTIN_SHORT, //
 					QUEBEC_CENTRE + VIA + DU_SAULT, //
-					"St-Paul" + SLASH + "A-Martin" //
-			).containsAll(headsignsValues)) {
+					QUEBEC_CENTRE //
+					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(QUEBEC_CENTRE, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
@@ -860,16 +862,17 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 22L) {
 			if (Arrays.asList( //
-					PARC_RELAIS_BUS_DES_RIVIÈRES, //
-					PARC_RELAIS_BUS_DES_RIVIÈRES + _P1_DIRECT_P2 //
-			).containsAll(headsignsValues)) {
+					PARC_RELAIS_BUS_DES_RIVIÈRES + _P1_DIRECT_P2, //
+					PARC_RELAIS_BUS_DES_RIVIÈRES //
+					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(PARC_RELAIS_BUS_DES_RIVIÈRES, mTrip.getHeadsignId());
 				return true;
-			} else if (Arrays.asList( //
-					BERNIERES_ST_NICOLAS, //
+			}
+			if (Arrays.asList( //
+					"Lisière" + SLASH + "Charmilles", //
 					BERNIERES_ST_NICOLAS + _P1_DIRECT_P2, //
-					"Lisière" + SLASH + "Charmilles" //
-			).containsAll(headsignsValues)) {
+					BERNIERES_ST_NICOLAS //
+					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(BERNIERES_ST_NICOLAS, mTrip.getHeadsignId());
 				return true;
 			}
@@ -944,7 +947,12 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern ST_LAMBERT_ = Pattern.compile("((^|\\W){1}(st\\-lambert\\-de\\-lauzon)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
 	private static final String ST_LAMBERT_REPLACEMENT = "$2" + ST_LAMBERT + "$4";
 
-	private static final Pattern ST_NICOLAS_BERNIERES_ = Pattern.compile("((^|\\W){1}(st\\-nicolas \\- bernières)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	// St-Nicolas - Bernières (Direct)
+	private static final Pattern ST_NICOLAS_BERNIERES_ = Pattern.compile("((^|\\W){1}(" //
+			+ "st\\-nicolas \\- bernières" //
+			+ "|" //
+			+ "st\\-nicolas \\- bernières" //
+			+ ")(\\W|$){1})", Pattern.CASE_INSENSITIVE);
 	private static final String ST_NICOLAS_BERNIERES_REPLACEMENT = "$2" + BERNIERES_ST_NICOLAS + "$4";
 
 	private static final Pattern ST_NICOLAS_VILLAGE_ = Pattern.compile("((^|\\W){1}(st\\-nicolas \\- village)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
@@ -971,10 +979,19 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern DASH_ = Pattern.compile("((^|\\W){1}(–)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
 	private static final String DASH_REPLACEMENT = "$2-$4";
 
+	private static final Pattern RENE_LEVESQUE_ = Pattern.compile("((^|\\W){1}(rené\\-lévesque)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final String RENE_LEVESQUE_REPLACEMENT = "$2" + RENE_LEVESQUE_SHORT + "$4";
+
+	private static final Pattern ABRAHAM_MARTIN_ = Pattern.compile("((^|\\W){1}(abraham\\-martin)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final String ABRAHAM_MARTIN_REPLACEMENT = "$2" + ABRAHAM_MARTIN_SHORT + "$4";
+
 	@Override
 	public String cleanTripHeadsign(String tripHeadsign) {
+		tripHeadsign = CleanUtils.SAINT.matcher(tripHeadsign).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		tripHeadsign = DASH_.matcher(tripHeadsign).replaceAll(DASH_REPLACEMENT);
 		tripHeadsign = TERMINUS_.matcher(tripHeadsign).replaceAll(TERMINUS_REPLACEMENT);
+		tripHeadsign = RENE_LEVESQUE_.matcher(tripHeadsign).replaceAll(RENE_LEVESQUE_REPLACEMENT);
+		tripHeadsign = ABRAHAM_MARTIN_.matcher(tripHeadsign).replaceAll(ABRAHAM_MARTIN_REPLACEMENT);
 		tripHeadsign = STATION.matcher(tripHeadsign).replaceAll(STATION_REPLACEMENT);
 		tripHeadsign = ST_JEAN_.matcher(tripHeadsign).replaceAll(ST_JEAN_REPLACEMENT);
 		tripHeadsign = ST_LAMBERT_.matcher(tripHeadsign).replaceAll(ST_LAMBERT_REPLACEMENT);
