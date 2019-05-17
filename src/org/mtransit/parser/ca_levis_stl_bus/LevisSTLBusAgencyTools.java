@@ -783,7 +783,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			} else if (Arrays.asList( //
 					ST_JEAN_CHRYSOSTOME, //
-					ST_JEAN_CHRYSOSTOME + _VIA_ + DU_SAULT //
+					ST_JEAN_CHRYSOSTOME + _VIA_ + DU_SAULT, //
+					ST_JEAN_CHRYSOSTOME + _VIA_ + DU_SAULT + _SLASH_ + TANIATA, //
+					ST_JEAN_CHRYSOSTOME + _VIA_ + "Vanier" //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(ST_JEAN_CHRYSOSTOME, mTrip.getHeadsignId());
 				return true;
@@ -842,6 +844,14 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					UQAR, //
 					"Wilfrid-Carrier" + _SLASH_ + "Arpents" // LEVIS_CENTRE
 			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(LEVIS_CENTRE, mTrip.getHeadsignId()); // LEVIS_CENTRE
+				return true;
+			}
+			if (Arrays.asList( //
+					LEVIS_CENTRE, //
+					LEVIS_CENTRE + _SLASH_ + "Innoparc", //
+					UQAR //
+					).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(LEVIS_CENTRE, mTrip.getHeadsignId()); // LEVIS_CENTRE
 				return true;
 			}
