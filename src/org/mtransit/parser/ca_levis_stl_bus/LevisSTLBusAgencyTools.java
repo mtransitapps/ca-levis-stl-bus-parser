@@ -265,6 +265,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return VILLAGE_ST_NICOLAS;
 				case 24:
 					return ST_REDEMPTEUR;
+				case 32:
+					return ST_ROMUALD;
 				case 65:
 					return ST_LAMBERT + _DASH_ + ST_NICOLAS;
 				case 131:
@@ -366,15 +368,20 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return CHARNY + _DASH_ + RIVE_NORD;
 			} else if ("35R".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return CHARNY;
+			} else if ("36E".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return CHARNY + _DASH_ + UNIVERSITE_LAVAL;
+			} else if ("37E".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return ST_JEAN_CHRYSOSTOME + _DASH_ + UNIVERSITE_LAVAL;
+			} else if ("38E".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return ST_JEAN_CHRYSOSTOME + _DASH_ + UNIVERSITE_LAVAL;
 			} else if ("41E".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return CHARNY + _DASH_ + CEGEP_LEVIS_LAUZON;
+			} else if ("42E".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return LEVIS_CENTRE + _DASH_ + CEGEP_GARNEAU;
 			} else if ("43E".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return PARC_RELAIS_BUS_DES_RIVIÈRES + _DASH_ + RIVE_NORD;
 			} else if ("60E".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return PARC_RELAIS_BUS_DES_RIVIÈRES + _DASH_ + RIVE_NORD;
-			}
-			if (isGoodEnoughAccepted()) {
-				return "Parcours " + gRoute.getRouteShortName();
 			}
 			System.out.printf("\nUnexpected route long name for %s!\n", gRoute);
 			System.exit(-1);
