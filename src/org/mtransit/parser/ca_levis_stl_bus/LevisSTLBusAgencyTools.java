@@ -196,6 +196,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String PINTENDRE = "Pintendre";
 	private static final String PIONNIERS = "Pionniers";
 	private static final String POINTE_DE_LA_MARTINIÈRE = "Pte de la Martinière";
+	private static final String POINTE_LEVY = "Pointe-Lévy";
 	private static final String PRESQU_ILE = "Presqu’Île";
 	private static final String QUEBEC = "Québec";
 	private static final String QUEBEC_CENTRE = QUEBEC + SPACE + CENTRE_SHORT;
@@ -269,14 +270,28 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return ST_ROMUALD;
 				case 65:
 					return ST_LAMBERT + _DASH_ + ST_NICOLAS;
+				case 111:
+					return POINTE_LEVY + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + _DASH_ + ST_ROMUALD + _SLASH_ + LAUZON;
+				case 115:
+					return LAUZON + _DASH_ + LEVIS_CENTRE;
+				case 125:
+					return LAUZON + _DASH_ + LEVIS_CENTRE;
 				case 131:
 					return ST_JEAN_CHRYSOSTOME + _SLASH_ + MANIC + _DASH_ + JUVENAT_NOTRE_DAME_LONG;
 				case 135:
 					return COLLEGE_DE_LEVIS + _SLASH_ + MARCELLE_MALLET + _DASH_ + ST_JEAN_CHRYSOSTOME;
+				case 136:
+					return ST_DAVID + _DASH_ + LEVIS_CENTRE;
+				case 137:
+					return ST_DAVID + _SLASH_ + "Hadlow" + _DASH_ + LEVIS_CENTRE;
 				case 141:
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + CHARNY_EST;
 				case 151:
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + CHARNY_OUEST;
+				case 155:
+					return PINTENDRE + _DASH_ + LEVIS_CENTRE;
+				case 156:
+					return PINTENDRE + _VIA_ + "Massenet" + _DASH_ + LEVIS_CENTRE;
 				case 161:
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + ST_JEAN_CHRYSOSTOME + _SLASH_ + ST_ROMUALD;
 				case 165:
@@ -311,6 +326,28 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return COLLEGE_DE_LEVIS + _SLASH_ + MARCELLE_MALLET + _DASH_ + ST_REDEMPTEUR + _SLASH_ + BERNIERES_EST;
 				case 246:
 					return COLLEGE_DE_LEVIS + _SLASH_ + MARCELLE_MALLET + _DASH_ + ST_REDEMPTEUR + _SLASH_ + ST_NICOLAS;
+				case 325:
+					return ST_ROMUALD + _DASH_ + LEVIS_CENTRE;
+				case 345:
+					return ST_ROMUALD + _SLASH_ + PRESQU_ILE + _SLASH_ + QUEBEC + _DASH_ + LEVIS_CENTRE;
+				case 351:
+					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + DASH_ + CHARNY;
+				case 355:
+					return CHARNY + _DASH_ + LEVIS_CENTRE;
+				case 371:
+					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + _DASH_ + ST_JEAN_CHRYSOSTOME;
+				case 375:
+					return ST_JEAN_CHRYSOSTOME + _DASH_ + LEVIS_CENTRE;
+				case 381:
+					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + DASH_ + ST_JEAN_CHRYSOSTOME;
+				case 385:
+					return ST_JEAN_CHRYSOSTOME + _DASH_ + LEVIS_CENTRE;
+				case 386:
+					return ST_JEAN_CHRYSOSTOME + _DASH_ + LEVIS_CENTRE;
+				case 391:
+					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + DASH_ + ST_JEAN_CHRYSOSTOME;
+				case 395:
+					return ST_JEAN_CHRYSOSTOME + _DASH_ + LEVIS_CENTRE;
 				case 915:
 					return COLLEGE_DE_LEVIS + _SLASH_ + MARCELLE_MALLET + _DASH_ + PINTENDRE;
 				case 916:
@@ -479,14 +516,16 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"20005", // Terminus de la Traverse
 								"20215", // Station Galeries Chagnon
-								"20585", // Terminus de la Médecine-U.Laval
+								"20495", // Station de la Concorde
+								"20585", // Station Stade Telus
+								"20580", // Station Université Laval
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
-						"20585", // Terminus de la Médecine-U.Laval
-								"20595", // Terminus de la Médecine-U.Laval
-								"20580", // Station Pavillon Desjardins-U.Laval
+						"20580", // Station Université Laval
 								"20510", // Station de la Concorde
+								"20510", // Station de la Concorde
+								"20230", // Station Galeries Chagnon
 								"20005", // Terminus de la Traverse
 						})) //
 				.compileBothTripSort());
@@ -609,6 +648,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(0, //
 						Arrays.asList(new String[] { //
 						"20395", // Station de Saint-Romuald
+								"160070", // Taniata / de St-J.-Chrysostome
 								"160360", // ++ des Champs / Figaro
 								"160650", // Taniata / de Saint-Jean-Chrysostome
 								"20410", // Station de Saint-Romuald
@@ -642,15 +682,16 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"180190", // des Générations / de Charny
 								"180280", // ++
+								"180320", // des Églises / du C.-Hospitalier
 								"180010", // Station de la Concorde
 						})) //
 				.addTripSort(1, //
 						Arrays.asList(new String[] { //
 						"180010", // Station de la Concorde
 								"180012", // E.-Lacasse / de la Concorde
+								"180030", // des Églises / du C.-Hospitalier
 								"180080", // ++
 								"180190", // des Générations / de Charny
-
 						})) //
 				.compileBothTripSort());
 		map2.put(43L + RID__E, new RouteTripSpec(43L + RID__E, // 43E
@@ -790,6 +831,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			} else if (Arrays.asList( //
 					ST_JEAN_CHRYSOSTOME, //
+					ST_JEAN_CHRYSOSTOME + _VIA_ + TANIATA, //
 					ST_JEAN_CHRYSOSTOME + _VIA_ + DU_SAULT, //
 					ST_JEAN_CHRYSOSTOME + _VIA_ + DU_SAULT + _SLASH_ + TANIATA, //
 					ST_JEAN_CHRYSOSTOME + _VIA_ + "Vanier" //
@@ -878,6 +920,12 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					TERMINUS_DE_LA_TRAVERSE + _VIA_ + PROVENCE //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(TERMINUS_DE_LA_TRAVERSE, mTrip.getHeadsignId());
+				return true;
+			}
+			if (Arrays.asList( //
+					GALERIES_CHAGNON, //
+					GALERIES_CHAGNON + _SLASH_ + POINTE_LEVY).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(GALERIES_CHAGNON, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 19L) {
