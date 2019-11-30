@@ -334,7 +334,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				case 345:
 					return ST_ROMUALD + _SLASH_ + PRESQU_ILE + _SLASH_ + QUEBEC + _DASH_ + LEVIS_CENTRE;
 				case 351:
-					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + DASH_ + CHARNY;
+					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + _DASH_ + CHARNY;
 				case 355:
 					return CHARNY + _DASH_ + LEVIS_CENTRE;
 				case 371:
@@ -342,13 +342,13 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				case 375:
 					return ST_JEAN_CHRYSOSTOME + _DASH_ + LEVIS_CENTRE;
 				case 381:
-					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + DASH_ + ST_JEAN_CHRYSOSTOME;
+					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + _DASH_ + ST_JEAN_CHRYSOSTOME;
 				case 385:
 					return ST_JEAN_CHRYSOSTOME + _DASH_ + LEVIS_CENTRE;
 				case 386:
 					return ST_JEAN_CHRYSOSTOME + _DASH_ + LEVIS_CENTRE;
 				case 391:
-					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + DASH_ + ST_JEAN_CHRYSOSTOME;
+					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + _DASH_ + ST_JEAN_CHRYSOSTOME;
 				case 395:
 					return ST_JEAN_CHRYSOSTOME + _DASH_ + LEVIS_CENTRE;
 				case 915:
