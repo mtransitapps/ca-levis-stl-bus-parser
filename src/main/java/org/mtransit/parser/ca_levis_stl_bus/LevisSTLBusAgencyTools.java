@@ -1,16 +1,9 @@
 package org.mtransit.parser.ca_levis_stl_bus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.DefaultAgencyTools;
+import org.mtransit.parser.MTLog;
 import org.mtransit.parser.Pair;
 import org.mtransit.parser.SplitUtils;
 import org.mtransit.parser.SplitUtils.RouteTripSpec;
@@ -26,6 +19,15 @@ import org.mtransit.parser.mt.data.MAgency;
 import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.mt.data.MTrip;
 import org.mtransit.parser.mt.data.MTripStop;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // https://www.stlevis.ca/stlevis/donnees-ouvertes
 // https://www.stlevis.ca/sites/default/files/public/assets/gtfs/transit/gtfs_stlevis.zip
@@ -45,15 +47,15 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void start(String[] args) {
-		System.out.printf("\nGenerating STLévis bus data...");
+		MTLog.log("Generating STLévis bus data...");
 		long start = System.currentTimeMillis();
 		boolean isNext = "next_".equalsIgnoreCase(args[2]);
 		if (isNext) {
 			setupNext();
 		}
-		this.serviceIds = extractUsefulServiceIds(args, this);
+		this.serviceIds = extractUsefulServiceIds(args, this, true);
 		super.start(args);
-		System.out.printf("\nGenerating STLévis bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+		MTLog.log("Generating STLévis bus data... DONE in %s.", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
 	private void setupNext() {
@@ -98,6 +100,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final long RID_L = 12 * 1000L;
 	private static final long RID_T = 20 * 1000L;
 
+	@SuppressWarnings("PointlessArithmeticExpression")
 	private static final long RID__A = 1 * 100_000L;
 	private static final long RID__E = 5 * 100_000L;
 	private static final long RID__R = 18 * 100_000L;
@@ -141,9 +144,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return digits + RID__R;
 			}
 		}
-		System.out.printf("\nUnexpected route ID for %s!\n", gRoute);
-		System.exit(-1);
-		return -1l;
+		MTLog.logFatal("Unexpected route ID for %s!", gRoute);
+		return -1L;
 
 	}
 
@@ -172,7 +174,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String CHARNY_EST = CHARNY + SPACE + EST;
 	private static final String CHAUDIERE_OUEST = "Chaudière-" + OUEST;
 	private static final String CHEMIN_DES_ILES = "Chemin des Îles";
-	private static final String CHEMIN_VIRE_CRÊPES = "Chemin Vire-Crêpes";
+	private static final String CHEMIN_VIRE_CREPES = "Chemin Vire-Crêpes";
 	private static final String DERNIER_ARRET = "Dernier Arrêt";
 	private static final String DORVAL = "Dorval";
 	private static final String DU_PRESIDENT_KENNEDY = "Du Président-Kennedy";
@@ -192,10 +194,10 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String MARCELLE_MALLET = "Marcelle-Mallet";
 	private static final String MONTCALM = "Montcalm";
 	private static final String PARC_RELAIS_BUS_SHORT = "PRB"; // "P+R";
-	private static final String PARC_RELAIS_BUS_DES_RIVIÈRES = PARC_RELAIS_BUS_SHORT + " Des Rivières";
+	private static final String PARC_RELAIS_BUS_DES_RIVIERES = PARC_RELAIS_BUS_SHORT + " Des Rivières";
 	private static final String PINTENDRE = "Pintendre";
 	private static final String PIONNIERS = "Pionniers";
-	private static final String POINTE_DE_LA_MARTINIÈRE = "Pte de la Martinière";
+	private static final String POINTE_DE_LA_MARTINIERE = "Pte de la Martinière";
 	private static final String POINTE_LEVY = "Pointe-Lévy";
 	private static final String PRESQU_ILE = "Presqu’Île";
 	private static final String QUEBEC = "Québec";
@@ -241,6 +243,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String VILLAGE_ST_NICOLAS = VILLAGE + SPACE + P1 + ST_NICOLAS + P2;
 	private static final String BERNIERES_ST_NICOLAS = BERNIERES + SPACE + P1 + ST_NICOLAS + P2;
 
+	@SuppressWarnings("DuplicateBranchesInSwitch")
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
 		String routeLongName = gRoute.getRouteLongName();
@@ -375,7 +378,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			} else if ("T2".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return RUE_ST_LAURENT + _DASH_ + TRAVERSE_DE_LEVIS;
 			} else if ("T11".equalsIgnoreCase(gRoute.getRouteShortName())) {
-				return POINTE_DE_LA_MARTINIÈRE + _DASH_ + LEVIS;
+				return POINTE_DE_LA_MARTINIERE + _DASH_ + LEVIS;
 			} else if ("T16".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return BREAKEYVILLE + _DASH_ + ST_JEAN_CHRYSOSTOME;
 			} else if ("T22".equalsIgnoreCase(gRoute.getRouteShortName())) {
@@ -383,7 +386,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			} else if ("T23".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return VILLAGE_ST_NICOLAS;
 			} else if ("T25".equalsIgnoreCase(gRoute.getRouteShortName())) {
-				return CHEMIN_VIRE_CRÊPES + _DASH_ + STATION_PLANTE;
+				return CHEMIN_VIRE_CREPES + _DASH_ + STATION_PLANTE;
 			} else if ("T65".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return ST_LAMBERT + _DASH_ + "Secteur des Éperviers";
 			}
@@ -416,12 +419,11 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			} else if ("42E".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return LEVIS_CENTRE + _DASH_ + CEGEP_GARNEAU;
 			} else if ("43E".equalsIgnoreCase(gRoute.getRouteShortName())) {
-				return PARC_RELAIS_BUS_DES_RIVIÈRES + _DASH_ + RIVE_NORD;
+				return PARC_RELAIS_BUS_DES_RIVIERES + _DASH_ + RIVE_NORD;
 			} else if ("60E".equalsIgnoreCase(gRoute.getRouteShortName())) {
-				return PARC_RELAIS_BUS_DES_RIVIÈRES + _DASH_ + RIVE_NORD;
+				return PARC_RELAIS_BUS_DES_RIVIERES + _DASH_ + RIVE_NORD;
 			}
-			System.out.printf("\nUnexpected route long name for %s!\n", gRoute);
-			System.exit(-1);
+			MTLog.logFatal("Unexpected route long name for %s!", gRoute);
 			return null;
 		}
 		routeLongName = CleanUtils.SAINT.matcher(routeLongName).replaceAll(CleanUtils.SAINT_REPLACEMENT);
@@ -447,31 +449,6 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				if (rsn >= 100 && rsn <= 999) {
 					return SCHOOL_BUS_COLOR;
 				}
-				switch (rsn) {
-				// @formatter:off
-				case 131: return SCHOOL_BUS_COLOR;
-				case 135: return SCHOOL_BUS_COLOR;
-				case 141: return SCHOOL_BUS_COLOR;
-				case 151: return SCHOOL_BUS_COLOR;
-				case 161: return SCHOOL_BUS_COLOR;
-				case 165: return SCHOOL_BUS_COLOR;
-				case 171: return SCHOOL_BUS_COLOR;
-				case 175: return SCHOOL_BUS_COLOR;
-				case 185: return SCHOOL_BUS_COLOR;
-				case 221: return SCHOOL_BUS_COLOR;
-				case 222: return SCHOOL_BUS_COLOR;
-				case 225: return SCHOOL_BUS_COLOR;
-				case 231: return SCHOOL_BUS_COLOR;
-				case 232: return SCHOOL_BUS_COLOR;
-				case 235: return SCHOOL_BUS_COLOR;
-				case 241: return SCHOOL_BUS_COLOR;
-				case 242: return SCHOOL_BUS_COLOR;
-				case 243: return SCHOOL_BUS_COLOR;
-				case 245: return SCHOOL_BUS_COLOR;
-				case 246: return SCHOOL_BUS_COLOR;
-				case 915: return SCHOOL_BUS_COLOR;
-				// @formatter:on
-				}
 			}
 			if ("T65".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return "C7B24C";
@@ -479,135 +456,135 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (isGoodEnoughAccepted()) {
 				return null;
 			}
-			System.out.printf("\nUnexpected route color for %s!\n", gRoute);
-			System.exit(-1);
+			MTLog.logFatal("Unexpected route color for %s!", gRoute);
 			return null;
 		}
 		return super.getRouteColor(gRoute);
 	}
 
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
+
 	static {
-		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
+		HashMap<Long, RouteTripSpec> map2 = new HashMap<>();
 		map2.put(RID_L + 1L, new RouteTripSpec(RID_L + 1L, // L1
 				0, MTrip.HEADSIGN_TYPE_STRING, ST_ETIENNE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, LEVIS) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"10005", // != Terminus de la Traverse
+						Arrays.asList(//
+								"10005", // != Terminus de la Traverse
 								"20005", // != Terminus de la Traverse
 								"20015", // ==
 								"20495", // Station de la Concorde
-								"10010", // Terminus Lagueux
-						})) //
+								"10010" // Terminus Lagueux
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"10010", // Terminus Lagueux
+						Arrays.asList(//
+								"10010", // Terminus Lagueux
 								"20510", // Station de la Concorde
 								"20010", // ==
 								"20005", // != Terminus de la Traverse
-								"10005", // != Terminus de la Traverse
-						})) //
+								"10005" // != Terminus de la Traverse
+						)) //
 				.compileBothTripSort());
 		map2.put(RID_L + 2L, new RouteTripSpec(RID_L + 2L, // L2
 				0, MTrip.HEADSIGN_TYPE_STRING, UNIVERSITE_LAVAL, //
 				1, MTrip.HEADSIGN_TYPE_STRING, LEVIS) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"20005", // Terminus de la Traverse
+						Arrays.asList(//
+								"20005", // Terminus de la Traverse
 								"20215", // Station Galeries Chagnon
 								"20495", // Station de la Concorde
 								"20585", // Station Stade Telus
-								"20580", // Station Université Laval
-						})) //
+								"20580" // Station Université Laval
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"20580", // Station Université Laval
+						Arrays.asList(//
+								"20580", // Station Université Laval
 								"20510", // Station de la Concorde
 								"20510", // Station de la Concorde
 								"20230", // Station Galeries Chagnon
-								"20005", // Terminus de la Traverse
-						})) //
+								"20005" // Terminus de la Traverse
+						)) //
 				.compileBothTripSort());
 		map2.put(RID_L + 3L, new RouteTripSpec(RID_L + 3L, // L3
 				0, MTrip.HEADSIGN_TYPE_STRING, UNIVERSITE_LAVAL, // Terminus de la Médecine
 				1, MTrip.HEADSIGN_TYPE_STRING, ST_ETIENNE) // Terminus Lagueux
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"30020", // Terminus Lagueux
+						Arrays.asList(//
+								"30020", // Terminus Lagueux
 								"30242", // ++
-								"20585", // Terminus de la Médecine-U.Laval
-						})) //
+								"20585" // Terminus de la Médecine-U.Laval
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"20585", // Terminus de la Médecine-U.Laval
+						Arrays.asList(//
+								"20585", // Terminus de la Médecine-U.Laval
 								"20595", // Terminus de la Médecine-U.Laval
 								"20580", // Station Pavillon Desjardins-U.Laval
-								"30020", // Terminus Lagueux
-						})) //
+								"30020" // Terminus Lagueux
+						)) //
 				.compileBothTripSort());
 		map2.put(11L, new RouteTripSpec(11L, //
 				0, MTrip.HEADSIGN_TYPE_STRING, LEVIS_CENTRE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, LAUZON) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"110245", // Lallemand / des Riveurs
-								"110535", // Galeries Chagnon / Alph.-Desjardins
-								"110003", // Terminus de la Traverse
-						})) //
-				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"110003", // Terminus de la Traverse
-								"110115", // ++
+						Arrays.asList(//
 								"110245", // Lallemand / des Riveurs
-						})) //
+								"110535", // Galeries Chagnon / Alph.-Desjardins
+								"110003" // Terminus de la Traverse
+						)) //
+				.addTripSort(1, //
+						Arrays.asList(//
+								"110003", // Terminus de la Traverse
+								"110115", // ++
+								"110245" // Lallemand / des Riveurs
+						)) //
 				.compileBothTripSort());
 		map2.put(11L + RID__A, new RouteTripSpec(11L + RID__A, // 11A
 				0, MTrip.HEADSIGN_TYPE_STRING, LEVIS_CENTRE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, LAUZON) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"110288", // Lallemand / des Riveurs
+						Arrays.asList(//
+								"110288", // Lallemand / des Riveurs
 								"110130", // ++
-								"110002", // Terminus de la Traverse
-						})) //
+								"110002" // Terminus de la Traverse
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"110002", // Terminus de la Traverse
+						Arrays.asList(//
+								"110002", // Terminus de la Traverse
 								"110580", // Galeries Chagnon - A.-Desjardins
 								"110450", // Station du Vieux-Fort
-								"110288", // Lallemand / des Riveurs
-						})) //
+								"110288" // Lallemand / des Riveurs
+						)) //
 				.compileBothTripSort());
 		map2.put(12L, new RouteTripSpec(12L, //
 				0, MTrip.HEADSIGN_TYPE_STRING, VIEUX_LEVIS, //
 				1, MTrip.HEADSIGN_TYPE_STRING, LAUZON) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"110288", // Lallemand / des Riveurs
+						Arrays.asList(//
+								"110288", // Lallemand / des Riveurs
 								"120046", // Caron / des Laquiers
-								"120380", // Déziel / Marie-Rollet
-						})) //
+								"120380" // Déziel / Marie-Rollet
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"120380", // Déziel / Marie-Rollet
+						Arrays.asList(//
+								"120380", // Déziel / Marie-Rollet
 								"120046", // Caron / des Laquiers
-								"110245", // Lallemand / des Riveurs
-						})) //
+								"110245" // Lallemand / des Riveurs
+						)) //
 				.compileBothTripSort());
 		map2.put(13L, new RouteTripSpec(13L, //
 				0, MTrip.HEADSIGN_TYPE_STRING, VIEUX_LEVIS, // TODO LEVIS_CENTRE
 				1, MTrip.HEADSIGN_TYPE_STRING, ST_DAVID) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"130145", // Ston des Rubis
+						Arrays.asList(//
+								"130145", // Ston des Rubis
 								"130143", // ++
 								"20232", // ++
-								"20230", // Station Galeries Chagnon #DORVAL
-						})) //
+								"20230" // Station Galeries Chagnon #DORVAL
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"20230", // Station Galeries Chagnon #DORVAL
+						Arrays.asList(//
+								"20230", // Station Galeries Chagnon #DORVAL
 								"110572", // A.-Desjardins / O.-J.-Morin
 								"110570", // ++
 								"110560", "110550", "120330", "120340", "120350", "110707", "120370", //
@@ -618,127 +595,126 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 								"110527", // Alphonse-Desjardins / Octave-J.-Morin
 								"110535", // Galeries Chagnon / Alph.-Desjardins
 								"130405", // ++
-								"130145", // Ston des Rubis
-						})) //
+								"130145" // Ston des Rubis
+						)) //
 				.compileBothTripSort());
 		map2.put(13L + RID__A, new RouteTripSpec(13L + RID__A, // 13A
 				0, MTrip.HEADSIGN_TYPE_STRING, DORVAL, // TODO LEVIS_CENTRE
 				1, MTrip.HEADSIGN_TYPE_STRING, ST_DAVID) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"130150", // Ston des Rubis
+						Arrays.asList(//
+								"130150", // Ston des Rubis
 								"130160", // ++
 								"110580", // Galeries Chagnon / Alph.-Desjardins
 								"110572", // Alphonse-Desjardins / Octave-J.-Morin
 								"110765", // ++
 								"110527", // A.-Desjardins / O.-J.-Morin
-								"20215", // Station Galeries Chagnon #DORVAL
-						})) //
+								"20215" // Station Galeries Chagnon #DORVAL
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"20215", // Station Galeries Chagnon
+						Arrays.asList(//
+								"20215", // Station Galeries Chagnon
 								"20217", // ++
 								"130140", // ++
-								"130150", // Ston des Rubis
-						})) //
+								"130150" // Ston des Rubis
+						)) //
 				.compileBothTripSort());
 		map2.put(27L + RID__R, new RouteTripSpec(27L + RID__R, // 27R
 				0, MTrip.HEADSIGN_TYPE_STRING, ST_JEAN_CHRYSOSTOME, //
 				1, MTrip.HEADSIGN_TYPE_STRING, ST_ROMUALD) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"20395", // Station de Saint-Romuald
+						Arrays.asList(//
+								"20395", // Station de Saint-Romuald
 								"160070", // Taniata / de St-J.-Chrysostome
 								"160360", // ++ des Champs / Figaro
 								"160650", // Taniata / de Saint-Jean-Chrysostome
 								"20410", // Station de Saint-Romuald
-								"990041", // Saint-Jacques / de l'Abbaye
-						})) //
+								"990041" // Saint-Jacques / de l'Abbaye
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"990041", // Saint-Jacques / de l'Abbaye
+						Arrays.asList(//
+								"990041", // Saint-Jacques / de l'Abbaye
 								"170130", // ++ du Sault / de l'Élizabeth
-								"20395", // Station de Saint-Romuald
-						})) //
+								"20395" // Station de Saint-Romuald
+						)) //
 				.compileBothTripSort());
+		//
 		map2.put(33L + RID__E, new RouteTripSpec(33L + RID__E, // 33E
 				0, MTrip.HEADSIGN_TYPE_STRING, CEGEP_GARNEAU, //
 				1, MTrip.HEADSIGN_TYPE_STRING, LEVIS) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"20215", // Station Galeries Chagnon
+						Arrays.asList(//
+								"20215", // Station Galeries Chagnon
 								"20375", // ++
-								"990109", // Sainte-Foy / Émile-Côté
-						})) //
+								"990109" // Sainte-Foy / Émile-Côté
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						/* no stops */
-						})) //
+						Collections.emptyList()) //
 				.compileBothTripSort());
 		map2.put(35L + RID__R, new RouteTripSpec(35L + RID__R, // 35R
 				0, MTrip.HEADSIGN_TYPE_STRING, STATION_DE_LA_CONCORDE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, CHARNY) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"180190", // des Générations / de Charny
+						Arrays.asList(//
+								"180190", // des Générations / de Charny
 								"180280", // ++
 								"180320", // des Églises / du C.-Hospitalier
-								"180010", // Station de la Concorde
-						})) //
+								"180010" // Station de la Concorde
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"180010", // Station de la Concorde
+						Arrays.asList(//
+								"180010", // Station de la Concorde
 								"180012", // E.-Lacasse / de la Concorde
 								"180030", // des Églises / du C.-Hospitalier
 								"180080", // ++
-								"180190", // des Générations / de Charny
-						})) //
+								"180190" // des Générations / de Charny
+						)) //
 				.compileBothTripSort());
 		map2.put(43L + RID__E, new RouteTripSpec(43L + RID__E, // 43E
 				0, MTrip.HEADSIGN_TYPE_STRING, RIVE_NORD, //
-				1, MTrip.HEADSIGN_TYPE_STRING, PARC_RELAIS_BUS_DES_RIVIÈRES) //
+				1, MTrip.HEADSIGN_TYPE_STRING, PARC_RELAIS_BUS_DES_RIVIERES) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"240345", // Parc-Relais-Bus des Rivières
+						Arrays.asList(//
+								"240345", // Parc-Relais-Bus des Rivières
 								"30382", // ++
 								"30390", // !=
 								"20505", // <>
 								"990107", // !=
-								"990109", // Sainte-Foy / Émile-Côté
-						})) //
+								"990109" // Sainte-Foy / Émile-Côté
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"990110", // Sainte-Foy / Émile-Côté
+						Arrays.asList(//
+								"990110", // Sainte-Foy / Émile-Côté
 								"990111", // !=
 								"990112", // !=
 								"20505", // == <>
 								"30385", // !=
-								"990123", // Parc-Relais-Bus des Rivières
-						})) //
+								"990123" // Parc-Relais-Bus des Rivières
+						)) //
 				.compileBothTripSort());
 		map2.put(60L + RID__E, new RouteTripSpec(60L + RID__E, // 60E
 				0, MTrip.HEADSIGN_TYPE_STRING, RIVE_NORD, //
-				1, MTrip.HEADSIGN_TYPE_STRING, PARC_RELAIS_BUS_DES_RIVIÈRES) //
+				1, MTrip.HEADSIGN_TYPE_STRING, PARC_RELAIS_BUS_DES_RIVIERES) //
 				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"650670", // Parc-Relais-Bus des Rivières
+						Arrays.asList(//
+								"650670", // Parc-Relais-Bus des Rivières
 								"990224", // !=
 								"20510", // <>
 								"180010", // <>
 								"20505", // <>
 								"30385", // !=
-								"990221", // des Quatre-Bourgeois / de Marly
-						})) //
+								"990221" // des Quatre-Bourgeois / de Marly
+						)) //
 				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"990221", // des Quatre-Bourgeois / de Marly
+						Arrays.asList(//
+								"990221", // des Quatre-Bourgeois / de Marly
 								"990224", // !=
 								"20510", // <>
 								"180010", // <>
 								"20505", // <>
 								"30385", // !=
-								"990123", // Parc-Relais-Bus des Rivières
-						})) //
+								"990123" // Parc-Relais-Bus des Rivières
+						)) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
 	}
@@ -800,10 +776,10 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == RID_EOQ) { // EOQ
 			if (Arrays.asList( //
-					PARC_RELAIS_BUS_DES_RIVIÈRES, //
-					PARC_RELAIS_BUS_DES_RIVIÈRES + _SLASH_ + ST_ETIENNE_DE_LAUZON //
+					PARC_RELAIS_BUS_DES_RIVIERES, //
+					PARC_RELAIS_BUS_DES_RIVIERES + _SLASH_ + ST_ETIENNE_DE_LAUZON //
 			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString(PARC_RELAIS_BUS_DES_RIVIÈRES, mTrip.getHeadsignId());
+				mTrip.setHeadsignString(PARC_RELAIS_BUS_DES_RIVIERES, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					PLACE_QUEBEC, //
@@ -826,7 +802,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					"St-Paul" + _SLASH_ + ABRAHAM_MARTIN_SHORT, //
 					QUEBEC_CENTRE + _VIA_ + DU_SAULT, //
 					QUEBEC_CENTRE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(QUEBEC_CENTRE, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
@@ -850,7 +826,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					TERMINUS_DE_LA_TRAVERSE, //
 					STATION_DE_LA_CONCORDE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(TERMINUS_DE_LA_TRAVERSE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -858,7 +834,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					STATION_PAVILLON_DESJARDINS + _DASH_ + UNIVERSITE_LAVAL, //
 					TERMINUS_DE_LA_TRAVERSE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(TERMINUS_DE_LA_TRAVERSE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -874,7 +850,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					(DORVAL + TO + ST_DAVID + TO + UQAR + TO + HOTEL_DIEU_DE_LEVIS + TO).trim(), //
 					(DORVAL + TO + HOTEL_DIEU_DE_LEVIS + TO + UQAR + TO + ST_DAVID + TO).trim() //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString((DORVAL + TO + HOTEL_DIEU_DE_LEVIS + TO + UQAR + TO + ST_DAVID + TO).trim(), mTrip.getHeadsignId());
 				return true;
 			}
@@ -882,7 +858,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					GALERIES_CHAGNON + _DASH_ + A_DESJARDINS, //
 					(DORVAL + TO + HOTEL_DIEU_DE_LEVIS + TO + UQAR + TO + ST_DAVID + TO).trim() //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString((DORVAL + TO + HOTEL_DIEU_DE_LEVIS + TO + UQAR + TO + ST_DAVID + TO).trim(), mTrip.getHeadsignId());
 				return true;
 			}
@@ -900,7 +876,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					LEVIS_CENTRE, //
 					LEVIS_CENTRE + _SLASH_ + "Innoparc", //
 					UQAR //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(LEVIS_CENTRE, mTrip.getHeadsignId()); // LEVIS_CENTRE
 				return true;
 			}
@@ -932,7 +908,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					STATION_DE_LA_CONCORDE, // <>
 					BREAKEYVILLE //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(BREAKEYVILLE, mTrip.getHeadsignId());
 				return true;
 			}
@@ -940,7 +916,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					"Lisière" + _SLASH_ + "Charmilles", //
 					BERNIERES_ST_NICOLAS //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(BERNIERES_ST_NICOLAS, mTrip.getHeadsignId());
 				return true;
 			}
@@ -948,7 +924,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					PIONNIERS + _SLASH_ + BARONET, //
 					VILLAGE_ST_NICOLAS //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(VILLAGE_ST_NICOLAS, mTrip.getHeadsignId());
 				return true;
 			}
@@ -957,7 +933,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					CEGEP_GARNEAU, //
 					STE_FOY + _DASH_ + UNIVERSITE_LAVAL + _SLASH_ + EMILE_COTE, //
 					UNIVERSITE_LAVAL //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(UNIVERSITE_LAVAL, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
@@ -971,79 +947,78 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (Arrays.asList( //
 					DERNIER_ARRET + SPACE + TANIATA + _SLASH_ + ST_JEAN_CHRYSOSTOME, //
 					(ST_ROMUALD + TO + ST_JEAN_CHRYSOSTOME + TO).trim() //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString((ST_ROMUALD + TO + ST_JEAN_CHRYSOSTOME + TO).trim(), mTrip.getHeadsignId());
 				return true;
 			}
-		} else if (mTrip.getRouteId() == 65l) {
+		} else if (mTrip.getRouteId() == 65L) {
 			if (Arrays.asList( //
 					ST_AUG + _SLASH_ + V_CHEMIN, //
-					PARC_RELAIS_BUS_DES_RIVIÈRES //
-					).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString(PARC_RELAIS_BUS_DES_RIVIÈRES, mTrip.getHeadsignId());
+					PARC_RELAIS_BUS_DES_RIVIERES //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(PARC_RELAIS_BUS_DES_RIVIERES, mTrip.getHeadsignId());
 				return true;
 			} else if (Arrays.asList( //
 					EXPLORATEURS + _SLASH_ + MONTCALM, //
 					ST_LAMBERT //
-					).containsAll(headsignsValues)) {
+			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(ST_LAMBERT, mTrip.getHeadsignId());
 				return true;
 			}
 		}
-		System.out.printf("\nUnexpected trips to merge %s & %s!\n", mTrip, mTripToMerge);
-		System.exit(-1);
+		MTLog.logFatal("Unexpected trips to merge %s & %s!", mTrip, mTripToMerge);
 		return false;
 	}
 
-	private static final Pattern STATION = Pattern.compile("((^|\\W){1}(station)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern STATION = Pattern.compile("((^|\\W)(station)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String STATION_REPLACEMENT = "$2$4"; // "$2" + STATION_SHORT; // + "$4"
 
-	private static final Pattern TERMINUS_ = Pattern.compile("((^|\\W){1}(terminus)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern TERMINUS_ = Pattern.compile("((^|\\W)(terminus)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String TERMINUS_REPLACEMENT = "$2$4"; // "$2" + TERMINUS_SHORT; // + "$4"
 
-	private static final Pattern STE_HELENE_DE_BREAKEYVILLE_ = Pattern.compile("((^|\\W){1}(ste\\-hélène\\-de\\-breakeyville)(\\W|$){1})",
+	private static final Pattern STE_HELENE_DE_BREAKEYVILLE_ = Pattern.compile("((^|\\W)(ste-hélène-de-breakeyville)(\\W|$))",
 			Pattern.CASE_INSENSITIVE);
 	private static final String STE_HELENE_DE_BREAKEYVILLE_REPLACEMENT = "$2" + BREAKEYVILLE + "$4";
 
-	private static final Pattern ST_LAMBERT_ = Pattern.compile("((^|\\W){1}(st\\-lambert\\-de\\-lauzon)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern ST_LAMBERT_ = Pattern.compile("((^|\\W)(st-lambert-de-lauzon)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String ST_LAMBERT_REPLACEMENT = "$2" + ST_LAMBERT + "$4";
 
 	// St-Nicolas - Bernières (Direct)
-	private static final Pattern ST_NICOLAS_BERNIERES_ = Pattern.compile("((^|\\W){1}(" //
-			+ "st\\-nicolas \\- bernières" //
+	private static final Pattern ST_NICOLAS_BERNIERES_ = Pattern.compile("((^|\\W)(" //
+			+ "st-nicolas - bernières" //
 			+ "|" //
-			+ "st\\-nicolas \\- bernières" //
-			+ ")(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+			+ "st-nicolas - bernières" //
+			+ ")(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String ST_NICOLAS_BERNIERES_REPLACEMENT = "$2" + BERNIERES_ST_NICOLAS + "$4";
 
-	private static final Pattern ST_NICOLAS_VILLAGE_ = Pattern.compile("((^|\\W){1}(st\\-nicolas \\- village)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern ST_NICOLAS_VILLAGE_ = Pattern.compile("((^|\\W)(st-nicolas - village)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String ST_NICOLAS_VILLAGE_REPLACEMENT = "$2" + VILLAGE_ST_NICOLAS + "$4";
 
-	private static final Pattern UNIVERSITE_ = Pattern.compile("((^|\\W){1}(universit[é|e])(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern UNIVERSITE_ = Pattern.compile("((^|\\W)(universit[é|e])(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String UNIVERSITE_REPLACEMENT = "$2" + UNIVERSITE_SHORT; // + "$4"
 
-	private static final Pattern CENTRE_ = Pattern.compile("((^|\\W){1}(centre)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern CENTRE_ = Pattern.compile("((^|\\W)(centre)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String CENTRE_REPLACEMENT = "$2" + CENTRE_SHORT + "$4";
 
-	private static final Pattern PARC_RELAIS_BUS_ = Pattern.compile("((^|\\W){1}(parc\\-relais\\-bus)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern PARC_RELAIS_BUS_ = Pattern.compile("((^|\\W)(parc-relais-bus)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String PARC_RELAIS_BUS_REPLACEMENT = "$2" + PARC_RELAIS_BUS_SHORT + "$4";
 
-	private static final Pattern QUEBEC_CTR_ = Pattern.compile("((^|\\W){1}(qu[é|e]bec centre\\-ville \\- SAAQ)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern QUEBEC_CTR_ = Pattern.compile("((^|\\W)(qu[é|e]bec centre-ville - SAAQ)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String QUEBEC_CTR_REPLACEMENT = "$2" + QUEBEC + SPACE + CENTRE_SHORT + "$4";
 
-	private static final Pattern ST_JEAN_ = Pattern.compile("((^|\\W){1}(st\\-jean))", Pattern.CASE_INSENSITIVE);
+	private static final Pattern ST_JEAN_ = Pattern.compile("((^|\\W)(st-jean))", Pattern.CASE_INSENSITIVE);
 	private static final String ST_JEAN_REPLACEMENT = "$2" + ST_JEAN_SHORT;
 
-	private static final Pattern JUVENAT_NOTRE_DAME_ = Pattern.compile("((^|\\W){1}(juv[e|é]nat notre\\-dame)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern JUVENAT_NOTRE_DAME_ = Pattern.compile("((^|\\W)(juv[e|é]nat notre-dame)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String JUVENAT_NOTRE_DAME_REPLACEMENT = "$2" + JUVENAT_NOTRE_DAME_SHORT + "$4";
 
-	private static final Pattern DASH_ = Pattern.compile("((^|\\W){1}(–)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern DASH_ = Pattern.compile("((^|\\W)(–)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String DASH_REPLACEMENT = "$2-$4";
 
-	private static final Pattern RENE_LEVESQUE_ = Pattern.compile("((^|\\W){1}(rené\\-lévesque)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern RENE_LEVESQUE_ = Pattern.compile("((^|\\W)(rené-lévesque)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String RENE_LEVESQUE_REPLACEMENT = "$2" + RENE_LEVESQUE_SHORT + "$4";
 
-	private static final Pattern ABRAHAM_MARTIN_ = Pattern.compile("((^|\\W){1}(abraham\\-martin)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
+	private static final Pattern ABRAHAM_MARTIN_ = Pattern.compile("((^|\\W)(abraham-martin)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String ABRAHAM_MARTIN_REPLACEMENT = "$2" + ABRAHAM_MARTIN_SHORT + "$4";
 
 	private static final Pattern ENDS_WITH_ARRETS_LIMITES_ = Pattern.compile("( \\(arr[e|ê]ts limit[e|é]s\\))", Pattern.CASE_INSENSITIVE);
