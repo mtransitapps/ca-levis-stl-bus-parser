@@ -652,6 +652,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		} else if (mTrip.getRouteId() == RID_L + 1L) { // L1
 			if (Arrays.asList( //
 					STATION_DE_LA_CONCORDE + _SLASH_ + CHARNY , //
+					ST_NICOLAS, //
 					TERMINUS_LAGUEUX//
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(TERMINUS_LAGUEUX, mTrip.getHeadsignId());
