@@ -271,8 +271,22 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return VILLAGE_ST_NICOLAS;
 				case 24:
 					return ST_REDEMPTEUR;
+				case 31:
+					return STATION_DE_LA_CONCORDE + _DASH_ + BREAKEYVILLE;
 				case 32:
 					return ST_ROMUALD;
+				case 34:
+					return STATION_DE_LA_CONCORDE + _DASH_ + ST_ROMUALD;
+				case 35:
+					return STATION_DE_LA_CONCORDE + _DASH_ + CHARNY + _VIA_ + "Eau-Vive";
+				case 36:
+					return STATION_DE_LA_CONCORDE + _DASH_ + CHARNY + _VIA_ + "C.-Hospitalier";
+				case 37:
+					return TANIATA + _DASH_ + ST_JEAN_CHRYSOSTOME + _VIA_ + TANIATA;
+				case 38:
+					return TANIATA + _DASH_ + ST_JEAN_CHRYSOSTOME + _VIA_ + "Vanier";
+				case 39:
+					return STATION_DE_LA_CONCORDE + _DASH_ + CHARNY + _SLASH_ + ST_JEAN_CHRYSOSTOME;
 				case 65:
 					return ST_LAMBERT + _DASH_ + ST_NICOLAS;
 				case 111:
@@ -383,6 +397,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return RUE_ST_LAURENT + _DASH_ + TRAVERSE_DE_LEVIS;
 			} else if ("T11".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return POINTE_DE_LA_MARTINIERE + _DASH_ + LEVIS;
+			} else if ("T15".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return GALERIES_CHAGNON + _DASH_ +  PINTENDRE;
 			} else if ("T16".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return BREAKEYVILLE + _DASH_ + ST_JEAN_CHRYSOSTOME;
 			} else if ("T22".equalsIgnoreCase(gRoute.getRouteShortName())) {
@@ -391,6 +407,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return VILLAGE_ST_NICOLAS;
 			} else if ("T25".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return CHEMIN_VIRE_CREPES + _DASH_ + STATION_PLANTE;
+			} else if ("T31".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return BREAKEYVILLE + _DASH_ + V_CHEMIN;
 			} else if ("T65".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return ST_LAMBERT + _DASH_ + "Secteur des Éperviers";
 			} else if ("T66".equalsIgnoreCase(gRoute.getRouteShortName())) {
@@ -472,17 +490,34 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<>();
+		map2.put(RID_L + 2L, new RouteTripSpec(RID_L + 2L, //  L2 // BECAUSE SAME TRIP HEAD-SIGNS
+				0, MTrip.HEADSIGN_TYPE_STRING, UNIVERSITE_LAVAL, //
+				1, MTrip.HEADSIGN_TYPE_STRING, TERMINUS_DE_LA_TRAVERSE) //
+				.addTripSort(0, //
+						Arrays.asList( //
+								"20005", "3001", // Terminus de la Traverse
+								"20295", // ++
+								"20585" //  Station Stade Telus
+						)) //
+				.addTripSort(1, //
+						Arrays.asList( //
+								"20585", // Station Stade Telus
+								"20510", "5048", // Station de la Concorde
+								"20230", "3020", // Station Galeries Chagnon
+								"20005", "3001" // Terminus de la Traverse
+						)) //
+				.compileBothTripSort());
 		map2.put(11L, new RouteTripSpec(11L, //
 				0, MTrip.HEADSIGN_TYPE_STRING, LEVIS_CENTRE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, LAUZON) //
 				.addTripSort(0, //
-						Arrays.asList(//
+						Arrays.asList( //
 								"110245", // Lallemand / des Riveurs
-								"110535", // Galeries Chagnon / Alph.-Desjardins
+								"110535", "3053", // Galeries Chagnon / Alph.-Desjardins
 								"110003" // Terminus de la Traverse
 						)) //
 				.addTripSort(1, //
-						Arrays.asList(//
+						Arrays.asList( //
 								"110003", // Terminus de la Traverse
 								"110115", // ++
 								"110245" // Lallemand / des Riveurs
@@ -492,15 +527,15 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				0, MTrip.HEADSIGN_TYPE_STRING, LEVIS_CENTRE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, LAUZON) //
 				.addTripSort(0, //
-						Arrays.asList(//
+						Arrays.asList( //
 								"110288", // Lallemand / des Riveurs
 								"110130", // ++
 								"110002" // Terminus de la Traverse
 						)) //
 				.addTripSort(1, //
-						Arrays.asList(//
+						Arrays.asList( //
 								"110002", // Terminus de la Traverse
-								"110580", // Galeries Chagnon - A.-Desjardins
+								"110580", "3052", // Galeries Chagnon - A.-Desjardins
 								"110450", // Station du Vieux-Fort
 								"110288" // Lallemand / des Riveurs
 						)) //
@@ -509,7 +544,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				0, MTrip.HEADSIGN_TYPE_STRING, ST_JEAN_CHRYSOSTOME, //
 				1, MTrip.HEADSIGN_TYPE_STRING, ST_ROMUALD) //
 				.addTripSort(0, //
-						Arrays.asList(//
+						Arrays.asList( //
 								"20395", // Station de Saint-Romuald
 								"160070", // Taniata / de St-J.-Chrysostome
 								"160360", // ++ des Champs / Figaro
@@ -518,7 +553,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 								"990041" // Saint-Jacques / de l'Abbaye
 						)) //
 				.addTripSort(1, //
-						Arrays.asList(//
+						Arrays.asList( //
 								"990041", // Saint-Jacques / de l'Abbaye
 								"170130", // ++ du Sault / de l'Élizabeth
 								"20395" // Station de Saint-Romuald
@@ -528,14 +563,14 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				0, MTrip.HEADSIGN_TYPE_STRING, STATION_DE_LA_CONCORDE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, CHARNY) //
 				.addTripSort(0, //
-						Arrays.asList(//
+						Arrays.asList( //
 								"180190", // des Générations / de Charny
 								"180280", // ++
 								"180320", // des Églises / du C.-Hospitalier
 								"180010" // Station de la Concorde
 						)) //
 				.addTripSort(1, //
-						Arrays.asList(//
+						Arrays.asList( //
 								"180010", // Station de la Concorde
 								"180012", // E.-Lacasse / de la Concorde
 								"180030", // des Églises / du C.-Hospitalier
@@ -659,10 +694,17 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			}
 			if (Arrays.asList( //
-					TERMINUS_DE_LA_TRAVERSE, //
-					STATION_DE_LA_CONCORDE //
+					STATION_DE_LA_CONCORDE, //
+					TERMINUS_DE_LA_TRAVERSE //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(TERMINUS_DE_LA_TRAVERSE, mTrip.getHeadsignId());
+				return true;
+			}
+			if (Arrays.asList( //
+					"Parc Ind. De " + LAUZON, //
+					STATION_DE_LA_CONCORDE //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(STATION_DE_LA_CONCORDE, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == RID_L + 2L) { // L2
@@ -684,6 +726,20 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		} else if (mTrip.getRouteId() == RID_L + 3L) { // L3
 			if (Arrays.asList( //
 					UNIVERSITE_LAVAL, // <>
+					TERMINUS_LAGUEUX //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(TERMINUS_LAGUEUX, mTrip.getHeadsignId());
+				return true;
+			}
+			if (Arrays.asList( //
+					STATION_DE_LA_CONCORDE, //
+					STE_FOY + " Ctr" // <>
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(STE_FOY + " Ctr", mTrip.getHeadsignId());
+				return true;
+			}
+			if (Arrays.asList( //
+					STE_FOY + " Ctr", // <>
 					TERMINUS_LAGUEUX //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(TERMINUS_LAGUEUX, mTrip.getHeadsignId());
@@ -763,12 +819,41 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString(BERNIERES_ST_NICOLAS, mTrip.getHeadsignId());
 				return true;
 			}
+			if (Arrays.asList( //
+					PARC_RELAIS_BUS_DES_RIVIERES, //
+					STATION_DE_LA_CONCORDE //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(STATION_DE_LA_CONCORDE, mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == RID_T + 22L) { // T22
+			if (Arrays.asList( //
+					PARC_RELAIS_BUS_DES_RIVIERES + _SLASH_ + "Parc Ind. De " + BERNIERES + "-Nord", //
+					PARC_RELAIS_BUS_DES_RIVIERES //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(PARC_RELAIS_BUS_DES_RIVIERES, mTrip.getHeadsignId());
+				return true;
+			}
+			if (Arrays.asList( //
+					BERNIERES_ST_NICOLAS + _SLASH_ + PARC_RELAIS_BUS_DES_RIVIERES, //
+					BERNIERES_ST_NICOLAS //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(BERNIERES_ST_NICOLAS, mTrip.getHeadsignId());
+				return true;
+			}
 		} else if (mTrip.getRouteId() == 23L) {
 			if (Arrays.asList( //
 					PIONNIERS + _SLASH_ + BARONET, //
 					VILLAGE_ST_NICOLAS //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(VILLAGE_ST_NICOLAS, mTrip.getHeadsignId());
+				return true;
+			}
+			if (Arrays.asList( //
+					PARC_RELAIS_BUS_DES_RIVIERES, //
+					STATION_DE_LA_CONCORDE //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(STATION_DE_LA_CONCORDE, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 27L + RID__E) { // 27E
@@ -792,6 +877,14 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					(ST_ROMUALD + TO + ST_JEAN_CHRYSOSTOME + TO).trim() //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString((ST_ROMUALD + TO + ST_JEAN_CHRYSOSTOME + TO).trim(), mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == 34L) {
+			if (Arrays.asList( //
+					"Parc Ind. De " + ST_ROMUALD, //
+					ST_ROMUALD //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(ST_ROMUALD, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 43L + RID__E) { // 43E
@@ -877,6 +970,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String cleanTripHeadsign(String tripHeadsign) {
+		tripHeadsign = CleanUtils.removeVia(tripHeadsign);
 		tripHeadsign = CleanUtils.SAINT.matcher(tripHeadsign).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		tripHeadsign = DASH_.matcher(tripHeadsign).replaceAll(DASH_REPLACEMENT);
 		tripHeadsign = TERMINUS_.matcher(tripHeadsign).replaceAll(TERMINUS_REPLACEMENT);
