@@ -144,9 +144,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return digits + RID__R;
 			}
 		}
-		MTLog.logFatal("Unexpected route ID for %s!", gRoute);
-		return -1L;
-
+		throw new MTLog.Fatal("Unexpected route ID for %s!", gRoute);
 	}
 
 	private static final String _DASH_ = " - ";
@@ -186,7 +184,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String GALERIES = "Galeries";
 	private static final String GALERIES_CHAGNON = GALERIES + SPACE + CHAGNON;
 	private static final String GRAVEL = "Gravel";
-	private static final String JUVENAT_NOTRE_DAME_LONG = "Juvénat Notre-Dame";
+	private static final String JUVENAT = "Juvénat";
+	private static final String JUVENAT_NOTRE_DAME_LONG = JUVENAT + " Notre-Dame";
 	private static final String JUVENAT_NOTRE_DAME_SHORT = "JND"; // "Juvénat Notre-Dame";
 	private static final String LAUZON = "Lauzon";
 	private static final String LEVIS = "Lévis";
@@ -329,6 +328,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + BERNIERES_ST_NICOLAS;
 				case 222:
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + ST_NICOLAS + _SLASH_ + PRESQU_ILE;
+				case 223:
+					return ST_NICOLAS + _DASH_ + PRESQU_ILE + _SLASH_ + JUVENAT;
 				case 225:
 					return COLLEGE_DE_LEVIS + _SLASH_ + MARCELLE_MALLET + _DASH_ + ST_NICOLAS + _SLASH_ + PRESQU_ILE;
 				case 231:
@@ -347,6 +348,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return COLLEGE_DE_LEVIS + _SLASH_ + MARCELLE_MALLET + _DASH_ + ST_REDEMPTEUR + _SLASH_ + BERNIERES_EST;
 				case 246:
 					return COLLEGE_DE_LEVIS + _SLASH_ + MARCELLE_MALLET + _DASH_ + ST_REDEMPTEUR + _SLASH_ + ST_NICOLAS;
+				case 311:
+					return ST_ROMUALD + _DASH_ + JUVENAT_NOTRE_DAME_LONG + _SLASH_ + BREAKEYVILLE;
 				case 325:
 					return ST_ROMUALD + _DASH_ + LEVIS_CENTRE;
 				case 345:
@@ -447,8 +450,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			} else if ("60E".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return PARC_RELAIS_BUS_DES_RIVIERES + _DASH_ + RIVE_NORD;
 			}
-			MTLog.logFatal("Unexpected route long name for %s!", gRoute);
-			return null;
+			throw new MTLog.Fatal("Unexpected route long name for %s!", gRoute.toStringPlus());
 		}
 		routeLongName = CleanUtils.SAINT.matcher(routeLongName).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		routeLongName = CleanUtils.CLEAN_PARENTHESE1.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_PARENTHESE1_REPLACEMENT);
@@ -480,8 +482,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			if (isGoodEnoughAccepted()) {
 				return null;
 			}
-			MTLog.logFatal("Unexpected route color for %s!", gRoute);
-			return null;
+			throw new MTLog.Fatal("Unexpected route color for %s!", gRoute);
 		}
 		return super.getRouteColor(gRoute);
 	}
@@ -490,23 +491,6 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<>();
-		map2.put(RID_L + 2L, new RouteTripSpec(RID_L + 2L, //  L2 // BECAUSE SAME TRIP HEAD-SIGNS
-				0, MTrip.HEADSIGN_TYPE_STRING, UNIVERSITE_LAVAL, //
-				1, MTrip.HEADSIGN_TYPE_STRING, TERMINUS_DE_LA_TRAVERSE) //
-				.addTripSort(0, //
-						Arrays.asList( //
-								"20005", "3001", // Terminus de la Traverse
-								"20295", // ++
-								"20585" //  Station Stade Telus
-						)) //
-				.addTripSort(1, //
-						Arrays.asList( //
-								"20585", // Station Stade Telus
-								"20510", "5048", // Station de la Concorde
-								"20230", "3020", // Station Galeries Chagnon
-								"20005", "3001" // Terminus de la Traverse
-						)) //
-				.compileBothTripSort());
 		map2.put(11L, new RouteTripSpec(11L, //
 				0, MTrip.HEADSIGN_TYPE_STRING, LEVIS_CENTRE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, LAUZON) //
@@ -624,16 +608,10 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
 		if (mTrip.getRouteId() == RID_ELQ) { // ELQ
 			if (Arrays.asList( //
-					QUEBEC_CENTRE, //
-					QUEBEC_CENTRE + _VIA_ + DU_SAULT //
+					GALERIES_CHAGNON, //
+					LEVIS_CENTRE + _SLASH_ + LAUZON //
 			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString(QUEBEC_CENTRE, mTrip.getHeadsignId());
-				return true;
-			} else if (Arrays.asList( //
-					LEVIS_CENTRE, //
-					LEVIS_CENTRE + _VIA_ + DU_SAULT //
-			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString(LEVIS_CENTRE, mTrip.getHeadsignId());
+				mTrip.setHeadsignString(LEVIS_CENTRE + _SLASH_ + LAUZON, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == RID_EOQ) { // EOQ
@@ -707,20 +685,37 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString(STATION_DE_LA_CONCORDE, mTrip.getHeadsignId());
 				return true;
 			}
-		} else if (mTrip.getRouteId() == RID_L + 2L) { // L2
+		} else if (mTrip.getRouteId() == RID_T + 1L) { // T1
 			if (Arrays.asList( //
-					STATION_DE_LA_CONCORDE, //
-					UNIVERSITE_LAVAL //
+					"Îles / Gravel (AM)", //
+					"Îles", // <>
+					"Sureaux" //
 			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString(UNIVERSITE_LAVAL, mTrip.getHeadsignId());
+				mTrip.setHeadsignString("Sureaux", mTrip.getHeadsignId());
 				return true;
 			}
 			if (Arrays.asList( //
-					UNIVERSITE_LAVAL, // <>
+					"Îles / Gravel (PM)", //
+					"Îles" // <>
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Îles", mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == RID_L + 2L) { // L2
+			if (Arrays.asList( //
+					STE_FOY + " Ctr", // <>
 					GALERIES_CHAGNON, //
 					TERMINUS_DE_LA_TRAVERSE //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(TERMINUS_DE_LA_TRAVERSE, mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == RID_T + 2L) { // T2
+			if (Arrays.asList( //
+					"St-Laurent / Jalbert", //
+					"Riv. Etchemin" //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Riv. Etchemin", mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == RID_L + 3L) { // L3
@@ -821,6 +816,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 			if (Arrays.asList( //
 					PARC_RELAIS_BUS_DES_RIVIERES, //
+					STATION_DE_LA_CONCORDE + " / ESLE", //
 					STATION_DE_LA_CONCORDE //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(STATION_DE_LA_CONCORDE, mTrip.getHeadsignId());
@@ -844,6 +840,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		} else if (mTrip.getRouteId() == 23L) {
 			if (Arrays.asList( //
 					PIONNIERS + _SLASH_ + BARONET, //
+					VILLAGE_ST_NICOLAS + " (FDS)", //
 					VILLAGE_ST_NICOLAS //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(VILLAGE_ST_NICOLAS, mTrip.getHeadsignId());
@@ -851,6 +848,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 			if (Arrays.asList( //
 					PARC_RELAIS_BUS_DES_RIVIERES, //
+					STATION_DE_LA_CONCORDE + " / ESLE", //
+					STATION_DE_LA_CONCORDE + " (FDS)", //
 					STATION_DE_LA_CONCORDE //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(STATION_DE_LA_CONCORDE, mTrip.getHeadsignId());
@@ -887,6 +886,14 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString(ST_ROMUALD, mTrip.getHeadsignId());
 				return true;
 			}
+		} else if (mTrip.getRouteId() == 37L) {
+			if (Arrays.asList( //
+					TANIATA + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT, //
+					ST_JEAN_CHRYSOSTOME //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(ST_JEAN_CHRYSOSTOME, mTrip.getHeadsignId());
+				return true;
+			}
 		} else if (mTrip.getRouteId() == 43L + RID__E) { // 43E
 			if (Arrays.asList( //
 					PARC_RELAIS_BUS_DES_RIVIERES, //
@@ -910,8 +917,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			}
 		}
-		MTLog.logFatal("Unexpected trips to merge %s & %s!", mTrip, mTripToMerge);
-		return false;
+		throw new MTLog.Fatal("Unexpected trips to merge %s & %s!", mTrip, mTripToMerge);
 	}
 
 	private static final Pattern STATION = Pattern.compile("((^|\\W)(station)(\\W|$))", Pattern.CASE_INSENSITIVE);
