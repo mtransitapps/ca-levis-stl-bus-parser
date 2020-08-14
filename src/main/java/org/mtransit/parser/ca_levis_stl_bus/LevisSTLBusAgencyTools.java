@@ -312,6 +312,10 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return PINTENDRE + _DASH_ + LEVIS_CENTRE;
 				case 156:
 					return PINTENDRE + _VIA_ + "Massenet" + _DASH_ + LEVIS_CENTRE;
+				case 158:
+					return PINTENDRE + _DASH_ + POINTE_LEVY;
+				case 159:
+					return PINTENDRE + _DASH_ + POINTE_LEVY;
 				case 161:
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + ST_JEAN_CHRYSOSTOME + _SLASH_ + ST_ROMUALD;
 				case 165:
