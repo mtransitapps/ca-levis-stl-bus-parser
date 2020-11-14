@@ -328,6 +328,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + ST_ROMUALD;
 				case 185:
 					return COLLEGE_DE_LEVIS + _SLASH_ + MARCELLE_MALLET + _DASH_ + ST_ROMUALD;
+				case 220:
+					return ""; // TODO
 				case 221:
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + BERNIERES_ST_NICOLAS;
 				case 222:
@@ -404,6 +406,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return RUE_ST_LAURENT + _DASH_ + TRAVERSE_DE_LEVIS;
 			} else if ("T11".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return POINTE_DE_LA_MARTINIERE + _DASH_ + LEVIS;
+			} else if ("T13".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return ""; // TODO
 			} else if ("T15".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return GALERIES_CHAGNON + _DASH_ +  PINTENDRE;
 			} else if ("T16".equalsIgnoreCase(gRoute.getRouteShortName())) {
@@ -412,10 +416,16 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return BERNIERES_ST_NICOLAS;
 			} else if ("T23".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return VILLAGE_ST_NICOLAS;
+			} else if ("T24".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return ""; // TODO
 			} else if ("T25".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return CHEMIN_VIRE_CREPES + _DASH_ + STATION_PLANTE;
 			} else if ("T31".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return BREAKEYVILLE + _DASH_ + V_CHEMIN;
+			} else if ("T33".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return ""; // TODO
+			} else if ("T34".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return ""; // TODO
 			} else if ("T65".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return ST_LAMBERT + _DASH_ + "Secteur des Éperviers";
 			} else if ("T66".equalsIgnoreCase(gRoute.getRouteShortName())) {
@@ -512,11 +522,11 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 						)) //
 				.compileBothTripSort());
 		map2.put(11L + RID__A, new RouteTripSpec(11L + RID__A, // 11A
-				0, MTrip.HEADSIGN_TYPE_STRING, LEVIS_CENTRE, //
-				1, MTrip.HEADSIGN_TYPE_STRING, LAUZON) //
+				0, MTrip.HEADSIGN_TYPE_STRING, TERMINUS_DE_LA_TRAVERSE, //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Parc Ind. De " + LAUZON) //
 				.addTripSort(0, //
 						Arrays.asList( //
-								"110288", // Lallemand / des Riveurs
+								"1072", // Parc industriel de Lauzon
 								"110130", // ++
 								"110002" // Terminus de la Traverse
 						)) //
@@ -525,7 +535,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 								"110002", // Terminus de la Traverse
 								"110580", "3052", // Galeries Chagnon - A.-Desjardins
 								"110450", // Station du Vieux-Fort
-								"110288" // Lallemand / des Riveurs
+								"1072" // Parc industriel de Lauzon
 						)) //
 				.compileBothTripSort());
 		map2.put(27L + RID__R, new RouteTripSpec(27L + RID__R, // 27R
@@ -683,6 +693,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return true;
 			}
 			if (Arrays.asList( //
+					UQAR, //
 					"Parc Ind. De " + LAUZON, //
 					STATION_DE_LA_CONCORDE //
 			).containsAll(headsignsValues)) {
@@ -813,6 +824,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		} else if (mTrip.getRouteId() == 22L) {
 			if (Arrays.asList( //
 					"Lisière" + _SLASH_ + "Charmilles", //
+					ST_NICOLAS, //
 					BERNIERES_ST_NICOLAS //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(BERNIERES_ST_NICOLAS, mTrip.getHeadsignId());
@@ -890,12 +902,27 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString(ST_ROMUALD, mTrip.getHeadsignId());
 				return true;
 			}
+			if (Arrays.asList( //
+					"Sault / ESLE", //
+					STATION_DE_LA_CONCORDE //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(STATION_DE_LA_CONCORDE, mTrip.getHeadsignId());
+				return true;
+			}
 		} else if (mTrip.getRouteId() == 37L) {
 			if (Arrays.asList( //
 					TANIATA + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT, //
 					ST_JEAN_CHRYSOSTOME //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(ST_JEAN_CHRYSOSTOME, mTrip.getHeadsignId());
+				return true;
+			}
+		} else if (mTrip.getRouteId() == 39L) {
+			if (Arrays.asList( //
+					"ESLE", //
+					STATION_DE_LA_CONCORDE //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString(STATION_DE_LA_CONCORDE, mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == 43L + RID__E) { // 43E
