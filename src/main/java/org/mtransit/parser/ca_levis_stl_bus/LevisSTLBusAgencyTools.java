@@ -22,7 +22,6 @@ import org.mtransit.parser.mt.data.MTripStop;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,6 +58,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	private void setupNext() {
+		// DO NOTHING
 	}
 
 	@Override
@@ -223,7 +223,6 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String ST_ROMUALD = "St-Romuald";
 	private static final String STE_FOY = "Ste-Foy";
 	private static final String STATION_DE_LA_CONCORDE = "Concorde"; // STATION_SHORT + "De La Concorde";
-	private static final String STATION_PAVILLON_DESJARDINS = "Pavillon Desjardins"; // STATION_SHORT + "Pavillon Desjardins";
 	private static final String STATION_PLANTE = "Plante"; // STATION_SHORT + "Plante";
 	private static final String TANIATA = "Taniata";
 	private static final String TERMINUS_LAGUEUX = "Lagueux"; // TERMINUS_SHORT + "Lagueux";
@@ -523,7 +522,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				.compileBothTripSort());
 		map2.put(11L + RID__A, new RouteTripSpec(11L + RID__A, // 11A
 				0, MTrip.HEADSIGN_TYPE_STRING, TERMINUS_DE_LA_TRAVERSE, //
-				1, MTrip.HEADSIGN_TYPE_STRING, "Parc Ind. De " + LAUZON) //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Parc Ind De " + LAUZON) //
 				.addTripSort(0, //
 						Arrays.asList( //
 								"1072", // Parc industriel de Lauzon
@@ -694,7 +693,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 			if (Arrays.asList( //
 					UQAR, //
-					"Parc Ind. De " + LAUZON, //
+					"Parc Ind De " + LAUZON, //
 					STATION_DE_LA_CONCORDE //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(STATION_DE_LA_CONCORDE, mTrip.getHeadsignId());
@@ -728,9 +727,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		} else if (mTrip.getRouteId() == RID_T + 2L) { // T2
 			if (Arrays.asList( //
 					"St-Laurent / Jalbert", //
-					"Riv. Etchemin" //
+					"Riv Etchemin" //
 			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString("Riv. Etchemin", mTrip.getHeadsignId());
+				mTrip.setHeadsignString("Riv Etchemin", mTrip.getHeadsignId());
 				return true;
 			}
 		} else if (mTrip.getRouteId() == RID_L + 3L) { // L3
@@ -840,7 +839,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == RID_T + 22L) { // T22
 			if (Arrays.asList( //
-					PARC_RELAIS_BUS_DES_RIVIERES + _SLASH_ + "Parc Ind. De " + BERNIERES + "-Nord", //
+					PARC_RELAIS_BUS_DES_RIVIERES + _SLASH_ + "Parc Ind De " + BERNIERES + "-Nord", //
 					PARC_RELAIS_BUS_DES_RIVIERES //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(PARC_RELAIS_BUS_DES_RIVIERES, mTrip.getHeadsignId());
@@ -896,7 +895,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 34L) {
 			if (Arrays.asList( //
-					"Parc Ind. De " + ST_ROMUALD, //
+					"Parc Ind De " + ST_ROMUALD, //
 					ST_ROMUALD //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString(ST_ROMUALD, mTrip.getHeadsignId());
@@ -958,7 +957,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String TERMINUS_REPLACEMENT = "$2$4"; // "$2" + TERMINUS_SHORT; // + "$4"
 
 	private static final Pattern STE_HELENE_DE_BREAKEYVILLE_ = Pattern.compile("((^|\\W)(ste-hélène-de-breakeyville)(\\W|$))",
-			Pattern.CASE_INSENSITIVE);
+			Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final String STE_HELENE_DE_BREAKEYVILLE_REPLACEMENT = "$2" + BREAKEYVILLE + "$4";
 
 	private static final Pattern ST_LAMBERT_ = Pattern.compile("((^|\\W)(st-lambert-de-lauzon)(\\W|$))", Pattern.CASE_INSENSITIVE);
@@ -969,13 +968,13 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			+ "st-nicolas - bernières" //
 			+ "|" //
 			+ "st-nicolas - bernières" //
-			+ ")(\\W|$))", Pattern.CASE_INSENSITIVE);
+			+ ")(\\W|$))", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final String ST_NICOLAS_BERNIERES_REPLACEMENT = "$2" + BERNIERES_ST_NICOLAS + "$4";
 
 	private static final Pattern ST_NICOLAS_VILLAGE_ = Pattern.compile("((^|\\W)(st-nicolas - village)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String ST_NICOLAS_VILLAGE_REPLACEMENT = "$2" + VILLAGE_ST_NICOLAS + "$4";
 
-	private static final Pattern UNIVERSITE_ = Pattern.compile("((^|\\W)(universit[é|e])(\\W|$))", Pattern.CASE_INSENSITIVE);
+	private static final Pattern UNIVERSITE_ = Pattern.compile("((^|\\W)(universit[é|e])(\\W|$))", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final String UNIVERSITE_REPLACEMENT = "$2" + UNIVERSITE_SHORT; // + "$4"
 
 	private static final Pattern CENTRE_ = Pattern.compile("((^|\\W)(centre)(\\W|$))", Pattern.CASE_INSENSITIVE);
@@ -984,25 +983,25 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern PARC_RELAIS_BUS_ = Pattern.compile("((^|\\W)(parc-relais-bus)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String PARC_RELAIS_BUS_REPLACEMENT = "$2" + PARC_RELAIS_BUS_SHORT + "$4";
 
-	private static final Pattern QUEBEC_CTR_ = Pattern.compile("((^|\\W)(qu[é|e]bec centre-ville - SAAQ)(\\W|$))", Pattern.CASE_INSENSITIVE);
+	private static final Pattern QUEBEC_CTR_ = Pattern.compile("((^|\\W)(qu[é|e]bec centre-ville - SAAQ)(\\W|$))", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final String QUEBEC_CTR_REPLACEMENT = "$2" + QUEBEC + SPACE + CENTRE_SHORT + "$4";
 
 	private static final Pattern ST_JEAN_ = Pattern.compile("((^|\\W)(st-jean))", Pattern.CASE_INSENSITIVE);
 	private static final String ST_JEAN_REPLACEMENT = "$2" + ST_JEAN_SHORT;
 
-	private static final Pattern JUVENAT_NOTRE_DAME_ = Pattern.compile("((^|\\W)(juv[e|é]nat notre-dame)(\\W|$))", Pattern.CASE_INSENSITIVE);
+	private static final Pattern JUVENAT_NOTRE_DAME_ = Pattern.compile("((^|\\W)(juv[e|é]nat notre-dame)(\\W|$))", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final String JUVENAT_NOTRE_DAME_REPLACEMENT = "$2" + JUVENAT_NOTRE_DAME_SHORT + "$4";
 
 	private static final Pattern DASH_ = Pattern.compile("((^|\\W)(–)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String DASH_REPLACEMENT = "$2-$4";
 
-	private static final Pattern RENE_LEVESQUE_ = Pattern.compile("((^|\\W)(rené-lévesque)(\\W|$))", Pattern.CASE_INSENSITIVE);
+	private static final Pattern RENE_LEVESQUE_ = Pattern.compile("((^|\\W)(rené-lévesque)(\\W|$))", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final String RENE_LEVESQUE_REPLACEMENT = "$2" + RENE_LEVESQUE_SHORT + "$4";
 
 	private static final Pattern ABRAHAM_MARTIN_ = Pattern.compile("((^|\\W)(abraham-martin)(\\W|$))", Pattern.CASE_INSENSITIVE);
 	private static final String ABRAHAM_MARTIN_REPLACEMENT = "$2" + ABRAHAM_MARTIN_SHORT + "$4";
 
-	private static final Pattern ENDS_WITH_ARRETS_LIMITES_ = Pattern.compile("( \\(arr[e|ê]ts limit[e|é]s\\))", Pattern.CASE_INSENSITIVE);
+	private static final Pattern ENDS_WITH_ARRETS_LIMITES_ = Pattern.compile("( \\(arr[e|ê]ts limit[e|é]s\\))", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final Pattern ENDS_WITH_DIRECT_ = Pattern.compile("( \\(direct\\))", Pattern.CASE_INSENSITIVE);
 
 	@Override
