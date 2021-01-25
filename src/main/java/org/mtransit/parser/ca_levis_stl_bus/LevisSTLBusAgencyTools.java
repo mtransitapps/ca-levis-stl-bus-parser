@@ -1,12 +1,14 @@
 package org.mtransit.parser.ca_levis_stl_bus;
 
-import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
 import org.mtransit.parser.Pair;
 import org.mtransit.parser.SplitUtils;
 import org.mtransit.parser.SplitUtils.RouteTripSpec;
+import org.mtransit.parser.StringUtils;
 import org.mtransit.parser.Utils;
 import org.mtransit.parser.gtfs.data.GCalendar;
 import org.mtransit.parser.gtfs.data.GCalendarDate;
@@ -28,11 +30,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.mtransit.parser.StringUtils.EMPTY;
+
 // https://www.stlevis.ca/stlevis/donnees-ouvertes
 // https://www.stlevis.ca/sites/default/files/public/assets/gtfs/transit/gtfs_stlevis.zip
 public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
-	public static void main(String[] args) {
+	public static void main(@Nullable String[] args) {
 		if (args == null || args.length == 0) {
 			args = new String[3];
 			args[0] = "input/gtfs.zip";
@@ -42,54 +46,48 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		new LevisSTLBusAgencyTools().start(args);
 	}
 
-	private HashSet<String> serviceIds;
+	@Nullable
+	private HashSet<Integer> serviceIdInts;
 
 	@Override
-	public void start(String[] args) {
+	public void start(@NotNull String[] args) {
 		MTLog.log("Generating STLévis bus data...");
 		long start = System.currentTimeMillis();
-		boolean isNext = "next_".equalsIgnoreCase(args[2]);
-		if (isNext) {
-			setupNext();
-		}
-		this.serviceIds = extractUsefulServiceIds(args, this, true);
+		this.serviceIdInts = extractUsefulServiceIdInts(args, this, true);
 		super.start(args);
 		MTLog.log("Generating STLévis bus data... DONE in %s.", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
-	private void setupNext() {
-		// DO NOTHING
-	}
-
 	@Override
 	public boolean excludingAll() {
-		return this.serviceIds != null && this.serviceIds.isEmpty();
+		return this.serviceIdInts != null && this.serviceIdInts.isEmpty();
 	}
 
 	@Override
-	public boolean excludeCalendar(GCalendar gCalendar) {
-		if (this.serviceIds != null) {
-			return excludeUselessCalendar(gCalendar, this.serviceIds);
+	public boolean excludeCalendar(@NotNull GCalendar gCalendar) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessCalendarInt(gCalendar, this.serviceIdInts);
 		}
 		return super.excludeCalendar(gCalendar);
 	}
 
 	@Override
-	public boolean excludeCalendarDate(GCalendarDate gCalendarDates) {
-		if (this.serviceIds != null) {
-			return excludeUselessCalendarDate(gCalendarDates, this.serviceIds);
+	public boolean excludeCalendarDate(@NotNull GCalendarDate gCalendarDates) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessCalendarDateInt(gCalendarDates, this.serviceIdInts);
 		}
 		return super.excludeCalendarDate(gCalendarDates);
 	}
 
 	@Override
-	public boolean excludeTrip(GTrip gTrip) {
-		if (this.serviceIds != null) {
-			return excludeUselessTrip(gTrip, this.serviceIds);
+	public boolean excludeTrip(@NotNull GTrip gTrip) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessTripInt(gTrip, this.serviceIdInts);
 		}
 		return super.excludeTrip(gTrip);
 	}
 
+	@NotNull
 	@Override
 	public Integer getAgencyRouteType() {
 		return MAgency.ROUTE_TYPE_BUS;
@@ -116,7 +114,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final long RID_ESQ = 9_051_917L;
 
 	@Override
-	public long getRouteId(GRoute gRoute) {
+	public long getRouteId(@NotNull GRoute gRoute) {
 		if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
 			return Long.parseLong(gRoute.getRouteShortName()); // using route short name as route ID
 		}
@@ -243,10 +241,11 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String VILLAGE_ST_NICOLAS = VILLAGE + SPACE + P1 + ST_NICOLAS + P2;
 	private static final String BERNIERES_ST_NICOLAS = BERNIERES + SPACE + P1 + ST_NICOLAS + P2;
 
+	@NotNull
 	@SuppressWarnings("DuplicateBranchesInSwitch")
 	@Override
-	public String getRouteLongName(GRoute gRoute) {
-		String routeLongName = gRoute.getRouteLongName();
+	public String getRouteLongName(@NotNull GRoute gRoute) {
+		String routeLongName = gRoute.getRouteLongNameOrDefault();
 		if (StringUtils.isEmpty(routeLongName)) {
 			if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
 				int rsn = Integer.parseInt(gRoute.getRouteShortName());
@@ -408,7 +407,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			} else if ("T13".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return ""; // TODO
 			} else if ("T15".equalsIgnoreCase(gRoute.getRouteShortName())) {
-				return GALERIES_CHAGNON + _DASH_ +  PINTENDRE;
+				return GALERIES_CHAGNON + _DASH_ + PINTENDRE;
 			} else if ("T16".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return BREAKEYVILLE + _DASH_ + ST_JEAN_CHRYSOSTOME;
 			} else if ("T22".equalsIgnoreCase(gRoute.getRouteShortName())) {
@@ -466,8 +465,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			throw new MTLog.Fatal("Unexpected route long name for %s!", gRoute.toStringPlus());
 		}
 		routeLongName = CleanUtils.SAINT.matcher(routeLongName).replaceAll(CleanUtils.SAINT_REPLACEMENT);
-		routeLongName = CleanUtils.CLEAN_PARENTHESE1.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_PARENTHESE1_REPLACEMENT);
-		routeLongName = CleanUtils.CLEAN_PARENTHESE2.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_PARENTHESE2_REPLACEMENT);
+		routeLongName = CleanUtils.CLEAN_PARENTHESIS1.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_PARENTHESIS1_REPLACEMENT);
+		routeLongName = CleanUtils.CLEAN_PARENTHESIS2.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_PARENTHESIS2_REPLACEMENT);
 		return CleanUtils.cleanLabel(routeLongName);
 	}
 
@@ -475,13 +474,15 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
 	private static final String SCHOOL_BUS_COLOR = "FFD800"; // YELLOW (from Wikipedia)
 
+	@NotNull
 	@Override
 	public String getAgencyColor() {
 		return AGENCY_COLOR;
 	}
 
+	@Nullable
 	@Override
-	public String getRouteColor(GRoute gRoute) {
+	public String getRouteColor(@NotNull GRoute gRoute) {
 		if (StringUtils.isEmpty(gRoute.getRouteColor())) {
 			if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
 				int rsn = Integer.parseInt(gRoute.getRouteShortName());
@@ -500,10 +501,11 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		return super.getRouteColor(gRoute);
 	}
 
-	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
+	private static final HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<>();
+		//noinspection deprecation
 		map2.put(11L, new RouteTripSpec(11L, //
 				0, MTrip.HEADSIGN_TYPE_STRING, LEVIS_CENTRE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, LAUZON) //
@@ -520,6 +522,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 								"110245" // Lallemand / des Riveurs
 						)) //
 				.compileBothTripSort());
+		//noinspection deprecation
 		map2.put(11L + RID__A, new RouteTripSpec(11L + RID__A, // 11A
 				0, MTrip.HEADSIGN_TYPE_STRING, TERMINUS_DE_LA_TRAVERSE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, "Parc Ind De " + LAUZON) //
@@ -537,6 +540,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 								"1072" // Parc industriel de Lauzon
 						)) //
 				.compileBothTripSort());
+		//noinspection deprecation
 		map2.put(27L + RID__R, new RouteTripSpec(27L + RID__R, // 27R
 				0, MTrip.HEADSIGN_TYPE_STRING, ST_JEAN_CHRYSOSTOME, //
 				1, MTrip.HEADSIGN_TYPE_STRING, ST_ROMUALD) //
@@ -556,6 +560,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 								"20395" // Station de Saint-Romuald
 						)) //
 				.compileBothTripSort());
+		//noinspection deprecation
 		map2.put(35L + RID__R, new RouteTripSpec(35L + RID__R, // 35R
 				0, MTrip.HEADSIGN_TYPE_STRING, STATION_DE_LA_CONCORDE, //
 				1, MTrip.HEADSIGN_TYPE_STRING, CHARNY) //
@@ -578,30 +583,33 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		ALL_ROUTE_TRIPS2 = map2;
 	}
 
+	@NotNull
 	@Override
-	public String cleanStopOriginalId(String gStopId) {
+	public String cleanStopOriginalId(@NotNull String gStopId) {
 		gStopId = CleanUtils.cleanMergedID(gStopId);
 		return gStopId;
 	}
 
 	@Override
-	public int compareEarly(long routeId, List<MTripStop> list1, List<MTripStop> list2, MTripStop ts1, MTripStop ts2, GStop ts1GStop, GStop ts2GStop) {
+	public int compareEarly(long routeId, @NotNull List<MTripStop> list1, @NotNull List<MTripStop> list2, @NotNull MTripStop ts1, @NotNull MTripStop ts2, @NotNull GStop ts1GStop, @NotNull GStop ts2GStop) {
 		if (ALL_ROUTE_TRIPS2.containsKey(routeId)) {
 			return ALL_ROUTE_TRIPS2.get(routeId).compare(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop, this);
 		}
 		return super.compareEarly(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop);
 	}
 
+	@NotNull
 	@Override
-	public ArrayList<MTrip> splitTrip(MRoute mRoute, GTrip gTrip, GSpec gtfs) {
+	public ArrayList<MTrip> splitTrip(@NotNull MRoute mRoute, @Nullable GTrip gTrip, @NotNull GSpec gtfs) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return ALL_ROUTE_TRIPS2.get(mRoute.getId()).getAllTrips();
 		}
 		return super.splitTrip(mRoute, gTrip, gtfs);
 	}
 
+	@NotNull
 	@Override
-	public Pair<Long[], Integer[]> splitTripStop(MRoute mRoute, GTrip gTrip, GTripStop gTripStop, ArrayList<MTrip> splitTrips, GSpec routeGTFS) {
+	public Pair<Long[], Integer[]> splitTripStop(@NotNull MRoute mRoute, @NotNull GTrip gTrip, @NotNull GTripStop gTripStop, @NotNull ArrayList<MTrip> splitTrips, @NotNull GSpec routeGTFS) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, ALL_ROUTE_TRIPS2.get(mRoute.getId()), this);
 		}
@@ -609,15 +617,18 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
+	public void setTripHeadsign(@NotNull MRoute mRoute, @NotNull MTrip mTrip, @NotNull GTrip gTrip, @NotNull GSpec gtfs) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return; // split
 		}
-		mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), gTrip.getDirectionId());
+		mTrip.setHeadsignString(
+				cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
+				gTrip.getDirectionIdOrDefault()
+		);
 	}
 
 	@Override
-	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
+	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
 		List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
 		if (mTrip.getRouteId() == RID_ELQ) { // ELQ
 			if (Arrays.asList( //
@@ -677,7 +688,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == RID_L + 1L) { // L1
 			if (Arrays.asList( //
-					STATION_DE_LA_CONCORDE + _SLASH_ + CHARNY , //
+					STATION_DE_LA_CONCORDE + _SLASH_ + CHARNY, //
 					ST_NICOLAS, //
 					TERMINUS_LAGUEUX//
 			).containsAll(headsignsValues)) {
@@ -1004,8 +1015,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern ENDS_WITH_ARRETS_LIMITES_ = Pattern.compile("( \\(arr[e|ê]ts limit[e|é]s\\))", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
 	private static final Pattern ENDS_WITH_DIRECT_ = Pattern.compile("( \\(direct\\))", Pattern.CASE_INSENSITIVE);
 
+	@NotNull
 	@Override
-	public String cleanTripHeadsign(String tripHeadsign) {
+	public String cleanTripHeadsign(@NotNull String tripHeadsign) {
 		tripHeadsign = CleanUtils.removeVia(tripHeadsign);
 		tripHeadsign = CleanUtils.SAINT.matcher(tripHeadsign).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		tripHeadsign = DASH_.matcher(tripHeadsign).replaceAll(DASH_REPLACEMENT);
@@ -1023,26 +1035,28 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		tripHeadsign = QUEBEC_CTR_.matcher(tripHeadsign).replaceAll(QUEBEC_CTR_REPLACEMENT);
 		tripHeadsign = CENTRE_.matcher(tripHeadsign).replaceAll(CENTRE_REPLACEMENT);
 		tripHeadsign = UNIVERSITE_.matcher(tripHeadsign).replaceAll(UNIVERSITE_REPLACEMENT);
-		tripHeadsign = ENDS_WITH_DIRECT_.matcher(tripHeadsign).replaceAll(StringUtils.EMPTY);
-		tripHeadsign = ENDS_WITH_ARRETS_LIMITES_.matcher(tripHeadsign).replaceAll(StringUtils.EMPTY);
-		tripHeadsign = CleanUtils.removePoints(tripHeadsign);
+		tripHeadsign = ENDS_WITH_DIRECT_.matcher(tripHeadsign).replaceAll(EMPTY);
+		tripHeadsign = ENDS_WITH_ARRETS_LIMITES_.matcher(tripHeadsign).replaceAll(EMPTY);
 		tripHeadsign = CleanUtils.cleanStreetTypesFRCA(tripHeadsign);
 		return CleanUtils.cleanLabelFR(tripHeadsign);
 	}
 
+	@NotNull
 	@Override
-	public String cleanStopName(String gStopName) {
+	public String cleanStopName(@NotNull String gStopName) {
 		gStopName = CleanUtils.cleanStreetTypesFRCA(gStopName);
 		return CleanUtils.cleanLabelFR(gStopName);
 	}
 
+	@NotNull
 	@Override
-	public String getStopCode(GStop gStop) {
+	public String getStopCode(@NotNull GStop gStop) {
 		return String.valueOf(getStopId(gStop)); // using stop ID as stop code
 	}
 
 	@Override
-	public int getStopId(GStop gStop) {
+	public int getStopId(@NotNull GStop gStop) {
+		//noinspection deprecation
 		String stopId = gStop.getStopId();
 		stopId = CleanUtils.cleanMergedID(stopId);
 		return Integer.parseInt(stopId);
