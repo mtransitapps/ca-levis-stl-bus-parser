@@ -2,26 +2,19 @@ package org.mtransit.parser.ca_levis_stl_bus;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mtransit.parser.CleanUtils;
+import org.mtransit.commons.CharUtils;
+import org.mtransit.commons.CleanUtils;
+import org.mtransit.commons.StringUtils;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
-import org.mtransit.parser.StringUtils;
-import org.mtransit.parser.Utils;
-import org.mtransit.parser.gtfs.data.GCalendar;
-import org.mtransit.parser.gtfs.data.GCalendarDate;
 import org.mtransit.parser.gtfs.data.GRoute;
-import org.mtransit.parser.gtfs.data.GSpec;
 import org.mtransit.parser.gtfs.data.GStop;
-import org.mtransit.parser.gtfs.data.GTrip;
 import org.mtransit.parser.mt.data.MAgency;
-import org.mtransit.parser.mt.data.MRoute;
-import org.mtransit.parser.mt.data.MTrip;
 
-import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.mtransit.parser.StringUtils.EMPTY;
+import static org.mtransit.commons.StringUtils.EMPTY;
 
 // https://www.stlevis.ca/stlevis/donnees-ouvertes
 // https://www.stlevis.ca/sites/default/files/public/assets/gtfs/transit/gtfs_stlevis.zip
@@ -40,7 +33,6 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	public boolean defaultExcludeEnabled() {
 		return true;
 	}
-
 
 	@NotNull
 	@Override
@@ -70,7 +62,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public long getRouteId(@NotNull GRoute gRoute) {
-		if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
+		if (CharUtils.isDigitsOnly(gRoute.getRouteShortName())) {
 			return Long.parseLong(gRoute.getRouteShortName()); // using route short name as route ID
 		}
 		if (RSN_ECQ.equals(gRoute.getRouteShortName())) {
@@ -82,9 +74,9 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 		} else if (RSN_ESQ.equals(gRoute.getRouteShortName())) {
 			return RID_ESQ;
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
+		final Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
 		if (matcher.find()) {
-			long digits = Long.parseLong(matcher.group());
+			final long digits = Long.parseLong(matcher.group());
 			if (gRoute.getRouteShortName().startsWith("L")) {
 				return digits + RID_L;
 			} else if (gRoute.getRouteShortName().startsWith("T")) {
@@ -148,17 +140,17 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	private static final String RIVE_NORD = "Rive-" + NORD;
 	private static final String ST_DAVID = "St-David";
 	private static final String ST_ETIENNE = "St-Étienne";
-	private static final String ST_FOY = "St-Foy";
 	private static final String ST_JEAN_SHORT = "St-J";
 	private static final String ST_JEAN_CHRYSOSTOME = ST_JEAN_SHORT + "-Chrysostome";
 	private static final String ST_LAURENT = "St-Laurent";
 	private static final String ST_NICOLAS = "St-Nicolas";
 	private static final String ST_LAMBERT = "St-Lambert";
 	private static final String ST_LAMBERT_DE_LAUZON = ST_LAMBERT + "-de-Lauzon";
-	private static final String ST_REDEMPTEUR = "St-Rédempteur";
+	private static final String ST_REDEMPTEUR = "St-Rédempteur";
 	private static final String ST_ROMUALD = "St-Romuald";
 	private static final String STATION_DE_LA_CONCORDE = "Concorde"; // STATION_SHORT + "De La Concorde";
 	private static final String STATION_PLANTE = "Plante"; // STATION_SHORT + "Plante";
+	private static final String STE_FOY = "Ste-Foy";
 	private static final String TANIATA = "Taniata";
 	private static final String TRAVERSE_DE_LEVIS = "Traverse de " + LEVIS;
 	private static final String UNIVERSITE_SHORT = "U.";
@@ -178,10 +170,10 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	@SuppressWarnings("DuplicateBranchesInSwitch")
 	@Override
 	public String getRouteLongName(@NotNull GRoute gRoute) {
-		String routeLongName = gRoute.getRouteLongNameOrDefault();
+		final String routeLongName = gRoute.getRouteLongNameOrDefault();
 		if (StringUtils.isEmpty(routeLongName)) {
-			if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
-				int rsn = Integer.parseInt(gRoute.getRouteShortName());
+			if (CharUtils.isDigitsOnly(gRoute.getRouteShortName())) {
+				final int rsn = Integer.parseInt(gRoute.getRouteShortName());
 				switch (rsn) {
 				case 11:
 					return LAUZON + _DASH_ + LEVIS_CENTRE;
@@ -366,6 +358,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 				return LEVIS_CENTRE + _DASH_ + LAUZON;
 			} else if ("13A".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return ST_DAVID + _DASH_ + LEVIS_CENTRE;
+			} else if ("24E".equalsIgnoreCase(gRoute.getRouteShortName())) {
+				return STE_FOY + _DASH_ + ST_REDEMPTEUR;
 			} else if ("27E".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return ST_JEAN_CHRYSOSTOME + _DASH_ + RIVE_NORD;
 			} else if ("27R".equalsIgnoreCase(gRoute.getRouteShortName())) {
@@ -373,7 +367,7 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			} else if ("31E".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return ST_JEAN_CHRYSOSTOME + _DASH_ + CEGEP_LEVIS_LAUZON;
 			} else if ("33E".equalsIgnoreCase(gRoute.getRouteShortName())) {
-				return ST_FOY + _DASH_ + CEGEP_GARNEAU;
+				return STE_FOY + _DASH_ + CEGEP_GARNEAU;
 			} else if ("34E".equalsIgnoreCase(gRoute.getRouteShortName())) {
 				return ST_ROMUALD + _DASH_ + RIVE_NORD;
 			} else if ("35E".equalsIgnoreCase(gRoute.getRouteShortName())) {
@@ -397,6 +391,12 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 			}
 			throw new MTLog.Fatal("Unexpected route long name for %s!", gRoute.toStringPlus());
 		}
+		return cleanRouteLongName(routeLongName);
+	}
+
+	@NotNull
+	@Override
+	public String cleanRouteLongName(@NotNull String routeLongName) {
 		routeLongName = CleanUtils.SAINT.matcher(routeLongName).replaceAll(CleanUtils.SAINT_REPLACEMENT);
 		routeLongName = CleanUtils.CLEAN_PARENTHESIS1.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_PARENTHESIS1_REPLACEMENT);
 		routeLongName = CleanUtils.CLEAN_PARENTHESIS2.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_PARENTHESIS2_REPLACEMENT);
@@ -417,8 +417,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public String getRouteColor(@NotNull GRoute gRoute) {
 		if (StringUtils.isEmpty(gRoute.getRouteColor())) {
-			if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
-				int rsn = Integer.parseInt(gRoute.getRouteShortName());
+			if (CharUtils.isDigitsOnly(gRoute.getRouteShortName())) {
+				final int rsn = Integer.parseInt(gRoute.getRouteShortName());
 				if (rsn >= 100 && rsn <= 999) {
 					return SCHOOL_BUS_COLOR;
 				}
