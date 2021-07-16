@@ -215,10 +215,16 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return POINTE_LEVY + _SLASH_ + JUVENAT_NOTRE_DAME_SHORT + _DASH_ + ST_ROMUALD + _SLASH_ + LAUZON;
 				case 115:
 					return LAUZON + _DASH_ + LEVIS_CENTRE;
+				case 119:
+					return LAUZON + _DASH_ + POINTE_LEVY;
 				case 125:
 					return LAUZON + _DASH_ + LEVIS_CENTRE;
 				case 126:
 					return ETIENNE_DALLAIRE + _DASH_ + LEVIS_CENTRE;
+				case 127:
+					return LAUZON + _DASH_ + VIEUX_LEVIS;
+				case 129:
+					return LAUZON + _DASH_ + POINTE_LEVY;
 				case 131:
 					return ST_JEAN_CHRYSOSTOME + _SLASH_ + MANIC + _DASH_ + JUVENAT_NOTRE_DAME_LONG;
 				case 135:
@@ -227,6 +233,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return ST_DAVID + _DASH_ + LEVIS_CENTRE;
 				case 137:
 					return ST_DAVID + _SLASH_ + "Hadlow" + _DASH_ + LEVIS_CENTRE;
+				case 139:
+					return ST_DAVID + _DASH_ + POINTE_LEVY;
 				case 141:
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + CHARNY_EST;
 				case 151:
@@ -265,6 +273,8 @@ public class LevisSTLBusAgencyTools extends DefaultAgencyTools {
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + ST_NICOLAS;
 				case 232:
 					return JUVENAT_NOTRE_DAME_LONG + _DASH_ + ST_NICOLAS;
+				case 233:
+					return ST_ROMUALD + _SLASH_ + JUVENAT_NOTRE_DAME_LONG + _DASH_ + ST_NICOLAS;
 				case 235:
 					return COLLEGE_DE_LEVIS + _SLASH_ + MARCELLE_MALLET + _DASH_ + ST_NICOLAS + SPACE + P1 + VILLAGE + P2;
 				case 241:
